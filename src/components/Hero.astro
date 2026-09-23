@@ -1,0 +1,48 @@
+---
+import { site, stack } from '../data/site';
+import { t, ruta, ancla, type Idioma } from '../i18n';
+
+interface Props { idioma: Idioma }
+const { idioma } = Astro.props;
+const d = t(idioma);
+
+/* Solo las marcadas con `hero`. Plano y sin agrupar: aquí se escanea, no se
+   lee. La lista entera y agrupada por uso vive en su propia sección. */
+const tecnologias = stack
+  .flatMap((g) => g.items)
+  .filter((i) => 'hero' in i && i.hero)
+  .map((i) => i.nombre);
+---
+
+<header class="hero">
+  <div class="envoltura">
+    <h1 class="hero__nombre">{site.nombre}</h1>
+    <p class="hero__rol">{site.rol[idioma]}</p>
+
+    <p class="hero__propuesta">{d.hero.propuesta}</p>
+
+    <p class="hero__estado">
+      <span class="hero__punto" aria-hidden="true"></span>
+      {site.disponibilidad[idioma]}
+    </p>
+
+    <div class="hero__acciones">
+      <a class="boton boton--principal" href={ancla(idioma, 'proyectos')}>
+        {d.hero.verProyectos}
+      </a>
+      <a class="boton boton--secundario" href={ruta(idioma, 'cv')}>
+        {d.hero.descargarCV}
+      </a>
+      <a class="boton boton--secundario" href={`mailto:${site.email}`}>
+        {d.hero.contacto}
+      </a>
+    </div>
+
+    <div class="hero__stack">
+      <p class="micro">{d.hero.stackVisible}</p>
+      <ul class="fichas">
+        {tecnologias.map((nombre) => <li class="ficha">{nombre}</li>)}
+      </ul>
+    </div>
+  </div>
+</header>

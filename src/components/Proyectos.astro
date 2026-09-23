@@ -1,0 +1,77 @@
+---
+import { Image } from 'astro:assets';
+import { proyectosVisibles } from '../data/proyectos';
+import { t, rutaProyecto, type Idioma } from '../i18n';
+
+interface Props { idioma: Idioma }
+const { idioma } = Astro.props;
+const d = t(idioma);
+---
+
+<section class="seccion proyectos" id="proyectos" aria-labelledby="proyectos-titulo">
+  <div class="envoltura">
+    <h2 class="seccion__titulo" id="proyectos-titulo">{d.proyectos.titulo}</h2>
+    <p class="seccion__entradilla">{d.proyectos.entradilla}</p>
+
+    <div class="proyectos__lista">
+      {
+        proyectosVisibles.map((p) => (
+          <article class="proyecto">
+            {p.imagen && (
+              <figure class="proyecto__medio">
+                {/* <Image /> genera AVIF y WebP y los tamaños de cada pantalla.
+                    `loading` por defecto es lazy: estas imágenes están bajo el
+                    pliegue y no deben competir con el primer pintado. */}
+                <Image
+                  src={p.imagen}
+                  alt={p.imagenAlt[idioma]}
+                  widths={[400, 760, 1120]}
+                  sizes="(min-width: 60rem) 36rem, 92vw"
+                />
+              </figure>
+            )}
+
+            <div class="proyecto__texto">
+              <div class="proyecto__cabecera">
+                <span class="etiqueta">{d.proyectos.etiquetas[p.etiqueta]}</span>
+                {p.estado && <span class="micro">{p.estado[idioma]}</span>}
+              </div>
+
+              <h3 class="proyecto__nombre">
+                <a href={rutaProyecto(idioma, p.slug)}>{p.nombre}</a>
+              </h3>
+              <p class="proyecto__subtitulo micro">{p.subtitulo[idioma]}</p>
+              <p class="proyecto__resumen">{p.resumen[idioma]}</p>
+
+              <ul class="hechos">
+                {p.hechos[idioma].map((h) => <li>{h}</li>)}
+              </ul>
+
+              <div class="proyecto__acciones">
+                <a class="boton boton--principal" href={rutaProyecto(idioma, p.slug)}>
+                  {d.proyectos.verFicha}
+                  {/* El nombre del proyecto en el enlace, oculto en pantalla:
+                      quien navega con lector de pantalla salta de enlace en
+                      enlace y «Ver la ficha» dos veces no le dice cuál es cuál. */}
+                  <span class="vo"> — {p.nombre}</span>
+                </a>
+                {p.enlace && (
+                  <a
+                    class="boton boton--secundario"
+                    href={p.enlace}
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    {d.proyectos.abrir} {p.nombre}
+                    <span aria-hidden="true">↗</span>
+                    <span class="vo"> {d.proyectos.nuevaPestana}</span>
+                  </a>
+                )}
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

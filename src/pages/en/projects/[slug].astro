@@ -1,0 +1,14 @@
+---
+import FichaProyecto from '../../../vistas/FichaProyecto.astro';
+import { proyectosVisibles } from '../../../data/proyectos';
+
+export function getStaticPaths() {
+  return proyectosVisibles.map((proyecto) => ({
+    params: { slug: proyecto.slug },
+    props: { proyecto },
+  }));
+}
+
+const { proyecto } = Astro.props;
+---
+<FichaProyecto idioma="en" proyecto={proyecto} />

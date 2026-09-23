@@ -1,0 +1,33 @@
+---
+import { site } from '../data/site';
+import { t, type Idioma } from '../i18n';
+
+interface Props { idioma: Idioma }
+const { idioma } = Astro.props;
+const d = t(idioma);
+const anio = new Date().getFullYear();
+---
+
+<footer class="pie" id="contacto">
+  <div class="envoltura">
+    <ul class="pie__enlaces">
+      <li><a class="enlace" href={`mailto:${site.email}`}>{site.email}</a></li>
+      <li><a class="enlace" href={`tel:${site.telefono}`}>{site.telefonoVisible}</a></li>
+      <li>
+        <a class="enlace" href={site.linkedin} target="_blank" rel="noopener">
+          LinkedIn <span aria-hidden="true">↗</span>
+          <span class="vo">{d.proyectos.nuevaPestana}</span>
+        </a>
+      </li>
+      <li>
+        <a class="enlace" href={site.github} target="_blank" rel="noopener">
+          GitHub <span aria-hidden="true">↗</span>
+          <span class="vo">{d.proyectos.nuevaPestana}</span>
+        </a>
+      </li>
+    </ul>
+    <p class="pie__legal">
+      © {anio} {site.nombre}. {d.pie.hechaCon}
+    </p>
+  </div>
+</footer>

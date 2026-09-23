@@ -1,0 +1,17 @@
+---
+import FichaProyecto from '../../vistas/FichaProyecto.astro';
+import { proyectosVisibles } from '../../data/proyectos';
+
+/* Una página por proyecto visible. Como `proyectosVisibles` ya filtra los
+   borradores, un proyecto sin publicar no genera ruta ni entra en el sitemap:
+   no hay forma de dejar una ficha a medias colgando de una URL. */
+export function getStaticPaths() {
+  return proyectosVisibles.map((proyecto) => ({
+    params: { slug: proyecto.slug },
+    props: { proyecto },
+  }));
+}
+
+const { proyecto } = Astro.props;
+---
+<FichaProyecto idioma="es" proyecto={proyecto} />

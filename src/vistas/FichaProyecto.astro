@@ -1,0 +1,120 @@
+---
+/**
+ * La ficha de un proyecto, una sola vez para los dos idiomas.
+ *
+ * Es la página que lee quien ya ha decidido mirarte en serio: aquí va el
+ * porqué de cada decisión y la tabla de lo medido. La portada resume; esta
+ * página responde.
+ */
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Pie from '../components/Pie.astro';
+import type { Proyecto } from '../data/proyectos';
+import { site } from '../data/site';
+import { t, ruta, rutaProyecto, traduccionesProyecto, type Idioma } from '../i18n';
+
+interface Props { idioma: Idioma; proyecto: Proyecto }
+const { idioma, proyecto: p } = Astro.props;
+const d = t(idioma);
+
+const titulo = `${p.nombre} · ${site.nombre}`;
+/* La descripción sale del resumen, recortada a lo que Google enseña entero.
+   Se corta por la última frase completa, no a mitad de palabra. */
+const descripcion = p.resumen[idioma].slice(0, 155).replace(/\s+\S*$/, '');
+---
+
+<Base
+  idioma={idioma}
+  ruta={rutaProyecto(idioma, p.slug)}
+  alternativas={traduccionesProyecto(p.slug)}
+  titulo={titulo}
+  descripcion={descripcion}
+>
+  <main id="contenido" class="ficha-proyecto">
+    <div class="envoltura">
+      <p class="migas micro">
+        <a href={ruta(idioma, 'portada')}>← {d.nav.volver}</a>
+      </p>
+
+      <div class="proyecto__cabecera">
+        <span class="etiqueta">{d.proyectos.etiquetas[p.etiqueta]}</span>
+        {p.estado && <span class="micro">{p.estado[idioma]}</span>}
+      </div>
+
+      <h1 class="ficha-proyecto__titulo">{p.nombre}</h1>
+      <p class="proyecto__subtitulo micro">{p.subtitulo[idioma]}</p>
+      <p class="seccion__entradilla">{p.resumen[idioma]}</p>
+
+      <div class="proyecto__acciones">
+        {
+          p.enlace && (
+            <a class="boton boton--principal" href={p.enlace} target="_blank" rel="noopener">
+              {d.proyectos.abrir} {p.nombre}
+              <span aria-hidden="true">↗</span>
+              <span class="vo"> {d.proyectos.nuevaPestana}</span>
+            </a>
+          )
+        }
+        {
+          /* El botón del código aparece solo si hay repositorio. Mientras los
+             repos estén privados, el campo está vacío y el botón no existe: un
+             enlace a un repo privado es peor que no tener enlace, porque quien
+             pincha se encuentra un 404. */
+          p.repositorio && (
+            <a class="boton boton--secundario" href={p.repositorio} target="_blank" rel="noopener">
+              {d.proyectos.verCodigo}
+              <span aria-hidden="true">↗</span>
+              <span class="vo"> {d.proyectos.nuevaPestana}</span>
+            </a>
+          )
+        }
+      </div>
+
+      {
+        p.imagen && (
+          <figure class="ficha-proyecto__medio">
+            <Image
+              src={p.imagen}
+              alt={p.imagenAlt[idioma]}
+              widths={[560, 1120, 1600]}
+              sizes="(min-width: 76rem) 70rem, 92vw"
+              loading="eager"
+            />
+          </figure>
+        )
+      }
+
+      <div class="prosa">
+        <h2>{d.proyectos.laDecision}</h2>
+        {p.decision[idioma].map((parrafo) => <p>{parrafo}</p>)}
+
+        <h2>{d.proyectos.elResultado}</h2>
+        {p.resultado[idioma].map((parrafo) => <p>{parrafo}</p>)}
+      </div>
+
+      <h2 class="titulo-medido">{d.proyectos.loMedido}</h2>
+      <table class="medido">
+        <tbody>
+          {
+            p.medido.map((fila) => (
+              <tr>
+                <th scope="row">{fila.etiqueta[idioma]}</th>
+                <td>{fila.valor[idioma]}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+
+      {p.nota && <p class="nota">{p.nota[idioma]}</p>}
+
+      <div class="hero__stack">
+        <p class="micro">{d.proyectos.elStack}</p>
+        <ul class="fichas">
+          {p.stack.map((s) => <li class="ficha">{s}</li>)}
+        </ul>
+      </div>
+    </div>
+  </main>
+  <Pie idioma={idioma} />
+</Base>

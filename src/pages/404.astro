@@ -1,0 +1,51 @@
+---
+/**
+ * La página de error.
+ *
+ * Cloudflare la sirve para cualquier dirección que no exista, en los dos
+ * idiomas, así que no puede estar solo en uno: quien llega desde un enlace
+ * roto en inglés no tiene por qué entender el castellano. Va en los dos, el
+ * del visitante primero no se sabe, así que manda el del sitio.
+ *
+ * `noindex` porque una página de error indexada es una página basura en los
+ * resultados de búsqueda.
+ */
+import Base from '../layouts/Base.astro';
+import Pie from '../components/Pie.astro';
+import { site } from '../data/site';
+import { t, ruta } from '../i18n';
+
+const es = t('es');
+const en = t('en');
+---
+
+<Base
+  idioma="es"
+  ruta="/404"
+  alternativas={[{ idioma: 'es', ruta: '/404' }]}
+  titulo={`${es.error404.titulo} · ${site.nombre}`}
+  descripcion={es.error404.texto}
+  noindex
+>
+  <main id="contenido" class="hero">
+    <div class="envoltura">
+      <p class="micro">404</p>
+      <h1 class="ficha-proyecto__titulo">{es.error404.titulo}</h1>
+      <p class="seccion__entradilla">{es.error404.texto}</p>
+
+      <div class="hero__acciones">
+        <a class="boton boton--principal" href={ruta('es', 'portada')}>{es.error404.volver}</a>
+      </div>
+
+      {/* La versión en inglés, con su `lang` para que un lector de pantalla
+          cambie de voz en lugar de leer inglés con fonética castellana. */}
+      <div class="prosa error404__en" lang="en">
+        <p><strong>{en.error404.titulo}.</strong> {en.error404.texto}</p>
+        <p>
+          <a class="enlace" href={ruta('en', 'portada')}>{en.error404.volver}</a>
+        </p>
+      </div>
+    </div>
+  </main>
+  <Pie idioma="es" />
+</Base>

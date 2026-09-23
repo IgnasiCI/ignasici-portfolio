@@ -1,0 +1,686 @@
+/* ==========================================================================
+   IGNASI CAPELLA — ignasici.com
+   Hoja de estilos única, escrita a mano y con tokens.
+
+   La paleta y la escala tipográfica son las mismas que en mi web anterior: es
+   marca personal, no pereza. Lo que cambia es la estructura, porque el lector
+   es otro — antes un dueño de negocio, ahora quien selecciona para un puesto.
+   ========================================================================== */
+
+/* --- 1. Tipografías --------------------------------------------------------
+   Autoalojadas y recortadas (ver tools/subset-fonts.sh). 27 KB entre las dos.
+   El subconjunto cubre castellano e inglés con los mismos caracteres, así que
+   la web bilingüe no pesa ni un byte más que la monolingüe.
+   `swap` = el texto se lee desde el primer instante con la fuente del sistema
+   y se cambia al llegar la nuestra. Nunca hay texto invisible.             */
+
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/geist-latin.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('/fonts/geist-mono-latin.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --- 2. Tokens ----------------------------------------------------------- */
+
+:root {
+  /* Blanco cálido, tinta cálida y un único acento de señal.
+     El acento marca decisiones, no adorna: el punto de «disponible», los
+     enlaces de contacto y los marcadores de los hechos comprobables.
+     --accent cumple 3:1 (texto grande y elementos no textuales);
+     --accent-ink cumple 4,5:1 y es el único que puede ir en texto pequeño. */
+  --ink: #12110f; /* 16,7:1 sobre papel */
+  --ink-70: #4b4843; /* 8,0:1 */
+  --ink-40: #6b6862; /* 4,9:1 — AA en texto pequeño */
+  --line: #dedbd4;
+  --paper: #f1f0ec;
+  --paper-2: #e9e7e0;
+  --accent: #e4322b;
+  --accent-ink: #b3231b; /* 5,7:1 */
+
+  --font-sans: 'Geist', system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas,
+    monospace;
+
+  /* Escala fluida entre 360 px y 1440 px. Cinco papeles tipográficos en toda
+     la web y ni uno más: la contención es lo que se lee como criterio. */
+  --t-micro: clamp(0.75rem, 0.729rem + 0.09vw, 0.8125rem);
+  --t-body: clamp(1.0625rem, 1.042rem + 0.09vw, 1.125rem);
+  --t-lead: clamp(1.25rem, 1.083rem + 0.74vw, 1.75rem);
+  --t-h3: clamp(1.5rem, 1.333rem + 0.74vw, 2rem);
+  --t-h2: clamp(2.25rem, 1.5rem + 3.33vw, 4.5rem);
+  --t-display: clamp(2.75rem, min(1.167rem + 7.04vw, 15svh), 7.5rem);
+
+  --gutter: clamp(1.25rem, 0.85rem + 1.8vw, 3rem);
+  --section: clamp(5rem, 3rem + 8vw, 10rem);
+  --max: 76rem;
+  --medida: 34rem; /* medida de lectura: ~62 caracteres */
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Área pulsable mínima. WCAG 2.2 pide 24 px; 44 es lo que de verdad se
+     acierta con el pulgar, y es lo que usa esta web sin excepción. */
+  --tap: 2.75rem;
+
+  color-scheme: light;
+}
+
+/* --- 3. Base -------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  /* Que un ancla no deje el titular pegado al borde de arriba. */
+  scroll-padding-top: 2rem;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--t-body);
+  line-height: 1.6;
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img,
+picture,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--paper);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Solo para lectores de pantalla. */
+.vo {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Salta al contenido: primer tabulador de la página. */
+.saltar {
+  position: absolute;
+  left: var(--gutter);
+  top: 0.75rem;
+  z-index: 200;
+  padding: 0.6rem 1rem;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 4px;
+  font-size: var(--t-micro);
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform 0.2s var(--ease);
+}
+
+.saltar:focus {
+  transform: translateY(0);
+}
+
+/* --- 4. Piezas comunes ---------------------------------------------------- */
+
+.envoltura {
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Micro-etiqueta: mono, versalitas, muy espaciada. Es el único sitio donde
+   aparece la Geist Mono, y sirve para separar «rótulo» de «texto». */
+.micro {
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-40);
+}
+
+.seccion {
+  padding-block: var(--section);
+}
+
+.seccion__titulo {
+  font-size: var(--t-h2);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+}
+
+.seccion__entradilla {
+  margin-top: 1.25rem;
+  max-width: var(--medida);
+  font-size: var(--t-lead);
+  line-height: 1.4;
+  color: var(--ink-70);
+  text-wrap: balance;
+}
+
+/* Selector de idioma: fijo arriba a la derecha, fuera del flujo, porque no
+   compite con nada de la página. Un enlace, no un desplegable: con dos
+   idiomas, un menú es un clic de más. */
+.idioma-nav {
+  position: fixed;
+  top: 1rem;
+  right: var(--gutter);
+  z-index: 100;
+}
+
+.idioma {
+  display: grid;
+  place-items: center;
+  min-width: var(--tap);
+  min-height: var(--tap);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding-inline: 0.9rem;
+  background: color-mix(in srgb, var(--paper) 85%, transparent);
+  backdrop-filter: blur(8px);
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
+}
+
+.idioma:hover {
+  border-color: var(--ink-40);
+  background: var(--paper);
+}
+
+/* --- 5. Botones ----------------------------------------------------------- */
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: var(--tap);
+  padding: 0.75rem 1.4rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: var(--t-body);
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease), background 0.2s var(--ease),
+    border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.boton:hover {
+  transform: translateY(-2px);
+}
+
+.boton--principal {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.boton--principal:hover {
+  background: #000;
+}
+
+.boton--secundario {
+  border-color: var(--line);
+  background: transparent;
+  color: var(--ink);
+}
+
+.boton--secundario:hover {
+  border-color: var(--ink);
+}
+
+/* Enlace de texto con subrayado que se despega: el subrayado siempre está,
+   porque un enlace que solo se distingue por el color falla en WCAG. */
+.enlace {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+  text-decoration-thickness: 1px;
+}
+
+.enlace:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* --- 6. Hero -------------------------------------------------------------- */
+
+.hero {
+  padding-top: clamp(5rem, 4rem + 6vw, 9rem);
+  /* La sección siguiente ya trae su propio aire arriba: con el del hero
+     entero se abría un hueco de dos secciones entre el stack y «Proyectos». */
+  padding-bottom: calc(var(--section) * 0.55);
+}
+
+.hero__nombre {
+  font-size: var(--t-display);
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+  font-weight: 500;
+}
+
+/* El rol va inmediatamente debajo del nombre y en el mismo bloque visual:
+   son la primera de las cinco cosas que alguien que selecciona busca, y no
+   pueden estar a dos alturas distintas de la pantalla. */
+.hero__rol {
+  margin-top: 0.75rem;
+  font-size: var(--t-h3);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  color: var(--ink-70);
+}
+
+.hero__propuesta {
+  margin-top: 2rem;
+  max-width: 42rem;
+  font-size: var(--t-lead);
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+/* Disponibilidad. El punto es el único adorno del bloque y está justificado:
+   marca un estado, que es información, no decoración. */
+.hero__estado {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-top: 1.75rem;
+  color: var(--ink-70);
+  font-size: var(--t-micro);
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.hero__punto {
+  width: 0.5rem;
+  height: 0.5rem;
+  /* Alineado con la primera línea: en móvil el texto parte en dos y un punto
+     centrado en el bloque se queda flotando en medio de la nada. */
+  margin-top: 0.45em;
+  border-radius: 50%;
+  background: var(--accent);
+  flex: none;
+}
+
+.hero__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2.5rem;
+}
+
+/* El stack a la vista, en el hero. Sin barras de porcentaje y sin niveles:
+   «React 95 %» no significa nada y todo el mundo sabe que es inventado. Lo
+   único honesto es la lista, y que cada cosa esté en un proyecto que se abre. */
+.hero__stack {
+  margin-top: 3rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--line);
+}
+
+.fichas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.ficha {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper-2);
+  font-size: var(--t-micro);
+  color: var(--ink-70);
+  white-space: nowrap;
+}
+
+/* --- 7. Proyectos --------------------------------------------------------- */
+
+.proyectos {
+  border-top: 1px solid var(--line);
+}
+
+.proyectos__lista {
+  display: grid;
+  gap: clamp(4rem, 2rem + 8vw, 8rem);
+  margin-top: clamp(3rem, 2rem + 4vw, 5rem);
+}
+
+.proyecto {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+}
+
+@media (min-width: 60rem) {
+  .proyecto {
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2.5rem, 1rem + 4vw, 4.5rem);
+  }
+
+  /* El segundo proyecto invierte el orden. No es simetría por gusto: rompe el
+     patrón de rejilla y obliga al ojo a volver a mirar cada bloque en lugar de
+     dar por hecho que el siguiente es igual. */
+  .proyecto:nth-child(even) .proyecto__medio {
+    order: 2;
+  }
+}
+
+.proyecto__medio {
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--paper-2);
+}
+
+.proyecto__medio img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.proyecto__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* La etiqueta de «Concepto» va en una palabra y sin disculpas. Un trabajo que
+   nadie encargó se etiqueta como lo que es y ya está. */
+.etiqueta {
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--paper-2);
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-70);
+}
+
+.proyecto__nombre {
+  margin-top: 1rem;
+  font-size: var(--t-h2);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  font-weight: 500;
+}
+
+.proyecto__nombre a {
+  text-decoration: none;
+}
+
+.proyecto__nombre a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 2px;
+}
+
+.proyecto__subtitulo {
+  margin-top: 0.75rem;
+}
+
+.proyecto__resumen {
+  margin-top: 1.25rem;
+  max-width: var(--medida);
+  color: var(--ink-70);
+  text-wrap: pretty;
+}
+
+/* Los tres hechos duros. Son para escanear en cinco segundos, por eso son
+   lista y no párrafo, y por eso son tres y no seis. */
+.hechos {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+}
+
+.hechos li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  align-items: start;
+  font-size: var(--t-micro);
+  font-family: var(--font-mono);
+  line-height: 1.5;
+  color: var(--ink-70);
+}
+
+.hechos li::before {
+  content: '';
+  width: 0.375rem;
+  height: 0.375rem;
+  margin-top: 0.5em;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.proyecto__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+/* --- 8. Ficha de proyecto ------------------------------------------------- */
+
+.ficha-proyecto {
+  padding-top: clamp(4rem, 3rem + 4vw, 7rem);
+}
+
+.migas {
+  margin-bottom: 2rem;
+}
+
+.migas a {
+  text-decoration: none;
+  color: var(--ink-40);
+}
+
+.migas a:hover {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+.ficha-proyecto .seccion__entradilla {
+  max-width: 44rem;
+}
+
+.ficha-proyecto__titulo {
+  font-size: var(--t-h2);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  font-weight: 500;
+  margin-top: 1rem;
+}
+
+.ficha-proyecto__medio {
+  margin: clamp(2.5rem, 1.5rem + 4vw, 4rem) 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.prosa {
+  max-width: var(--medida);
+}
+
+.prosa h2 {
+  margin-top: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+  font-size: var(--t-h3);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+.prosa p {
+  margin-top: 1.25rem;
+  color: var(--ink-70);
+  text-wrap: pretty;
+}
+
+/* La tabla de evidencias. Es la sección que un perfil técnico lee entera, y
+   por eso va en tabla y no en párrafo: cada fila es algo que puede volver a
+   medir él mismo. */
+.error404__en {
+  margin-top: 3rem;
+}
+
+.titulo-medido {
+  max-width: var(--medida);
+  margin-top: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+  font-size: var(--t-h3);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+.medido {
+  width: 100%;
+  max-width: 44rem;
+  margin-top: 1.75rem;
+  border-collapse: collapse;
+  font-size: var(--t-micro);
+  font-family: var(--font-mono);
+  text-align: left;
+}
+
+.medido th,
+.medido td {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.medido th {
+  width: 40%;
+  padding-right: 1.5rem;
+  font-weight: 400;
+  color: var(--ink-40);
+}
+
+.medido td {
+  color: var(--ink);
+}
+
+/* La nota honesta: por qué el SEO de Velàlia marca 69. Va en un bloque aparte
+   y con el borde de acento porque es justo lo que alguien que audita la web va
+   a encontrarse por su cuenta. Mejor contarlo antes. */
+.nota {
+  max-width: var(--medida);
+  margin-top: 2rem;
+  padding: 1.25rem 1.5rem;
+  border-left: 2px solid var(--accent);
+  background: var(--paper-2);
+  border-radius: 0 6px 6px 0;
+  font-size: var(--t-micro);
+  line-height: 1.6;
+  color: var(--ink-70);
+}
+
+/* --- 9. Pie --------------------------------------------------------------- */
+
+.pie {
+  border-top: 1px solid var(--line);
+  padding-block: clamp(3rem, 2rem + 4vw, 5rem);
+}
+
+.pie__enlaces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.pie__enlaces a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+}
+
+.pie__legal {
+  font-size: var(--t-micro);
+  color: var(--ink-40);
+}
+
+/* --- 10. Movimiento ------------------------------------------------------- */
+
+/* `prefers-reduced-motion` no acorta el movimiento: lo apaga. A alguien con
+   trastorno vestibular una animación corta le sienta igual de mal que una
+   larga. Y el scroll suave también se desactiva, que es lo que más se olvida. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .boton:hover {
+    transform: none;
+  }
+}

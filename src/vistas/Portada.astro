@@ -1,0 +1,25 @@
+---
+/**
+ * La portada, una sola vez para los dos idiomas.
+ *
+ * Las páginas de `src/pages` solo eligen el idioma y llaman aquí. Así no hay
+ * dos plantillas que mantener en paralelo, que es de donde salen las webs
+ * bilingües en las que una versión se queda vieja.
+ */
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Proyectos from '../components/Proyectos.astro';
+import Pie from '../components/Pie.astro';
+import { ruta, traducciones, type Idioma } from '../i18n';
+
+interface Props { idioma: Idioma }
+const { idioma } = Astro.props;
+---
+
+<Base idioma={idioma} ruta={ruta(idioma, 'portada')} alternativas={traducciones('portada')}>
+  <Hero idioma={idioma} />
+  <main id="contenido">
+    <Proyectos idioma={idioma} />
+  </main>
+  <Pie idioma={idioma} />
+</Base>
