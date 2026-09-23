@@ -29,8 +29,10 @@ const { idioma } = Astro.props;
 ---
 
 <Base idioma={idioma} ruta={ruta(idioma, 'portada')} alternativas={traducciones('portada')}>
-  <Hero idioma={idioma} />
+  {/* El hero va DENTRO de main: es contenido de la página, no la cabecera del
+      sitio. La cabecera es la barra, y un documento solo puede tener una. */}
   <main id="contenido">
+    <Hero idioma={idioma} />
     <Proyectos idioma={idioma} numero="01" />
     <Metodo idioma={idioma} numero="02" />
     <Stack idioma={idioma} numero="03" />

@@ -2,7 +2,8 @@
 import '../styles/global.css';
 import { site } from '../data/site';
 import { formacion, idiomas } from '../data/cv';
-import { t, otroIdioma, type Idioma } from '../i18n';
+import Nav from '../components/Nav.astro';
+import { t, type Idioma } from '../i18n';
 
 interface Props {
   idioma: Idioma;
@@ -22,9 +23,6 @@ const descripcion = Astro.props.descripcion ?? d.meta.descripcion;
 
 const canonica = new URL(ruta, site.url).href;
 const ogImagen = new URL('/og.png', site.url).href;
-
-const otro = otroIdioma(idioma);
-const rutaOtro = alternativas.find((a) => a.idioma === otro)?.ruta ?? '/';
 
 /* Datos estructurados: una sola entidad, Person.
    Es lo que sostiene la búsqueda por nombre y lo que puede leer un sistema de
@@ -112,8 +110,10 @@ const schema = {
       href={new URL(alternativas.find((a) => a.idioma === 'es')?.ruta ?? '/', site.url).href}
     />
 
-    {/* La fuente de los titulares se pide a la vez que el HTML: es lo primero
-        que se ve y no puede llegar tarde. */}
+    {/* Las dos que pintan la primera pantalla se piden a la vez que el HTML:
+        Fraunces hace el titular y Geist todo lo demás. La mono no entra aquí
+        porque solo aparece en etiquetas pequeñas. */}
+    <link rel="preload" href="/fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -141,19 +141,7 @@ const schema = {
   <body>
     <a class="saltar" href="#contenido">{d.saltar}</a>
 
-    {/* El selector de idioma es un enlace, no un desplegable: con dos idiomas
-        un menú es un clic de más. Lleva `lang` y `hreflang` propios para que un
-        lector de pantalla en castellano no intente leer «English» en castellano.
-
-        Va dentro de un <nav> porque si no queda fuera de todo landmark, y
-        entonces quien navega por regiones con un lector de pantalla no lo
-        encuentra nunca. axe lo marca como «region» y tiene razón. */}
-    <nav class="idioma-nav" aria-label={d.nav.idioma}>
-      <a class="idioma" href={rutaOtro} hreflang={otro} lang={otro} rel="alternate">
-        {t(otro).meta.etiqueta}
-        <span class="vo">{t(otro).meta.nombre}</span>
-      </a>
-    </nav>
+    <Nav idioma={idioma} alternativas={alternativas} />
 
     <slot />
 

@@ -12,8 +12,14 @@ inglés), sin cookies y sin ninguna petición a terceros.
 | CLS | 0 | 0 |
 | Bloqueo del hilo principal | 0 ms | 0 ms |
 
-Primera carga: **5 peticiones, 71,6 KB sin comprimir**. Incumplimientos de
+Primera carga: **6 peticiones, 95,5 KB sin comprimir**. Incumplimientos de
 accesibilidad detectados por axe-core: **0**, sobre 11 páginas × 4 entornos.
+
+Tres tipografías, 46,8 KB entre las tres: **Fraunces** titula, **Geist** habla
+y **Geist Mono** da datos. La serif de display es la pieza que más cambia el
+aspecto del sitio: sin ella todo son tamaños distintos de una misma geométrica,
+que es el aspecto por defecto de cualquier web montada con una librería de
+componentes.
 
 ---
 
@@ -42,6 +48,7 @@ src/
   i18n/               los dos idiomas y la tabla de rutas traducidas
   vistas/             portada y ficha de proyecto, una sola vez para es y en
   pages/              solo eligen el idioma y llaman a la vista
+  components/Nav.astro  la barra fija: acciones e idioma, siempre a la vista
   styles/global.css   el sistema visual entero
   scripts/main.js     ~1,3 KB: las apariciones y el formulario
 functions/

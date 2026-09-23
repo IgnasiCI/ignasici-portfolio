@@ -88,3 +88,33 @@ if (formulario) {
     boton.textContent = textoBoton;
   });
 }
+
+/* ------------------------------------------------------------------------
+   LA BARRA DE NAVEGACIÓN
+
+   Se encoge al separarse de arriba. Es lo único que hace: no se esconde al
+   bajar ni reaparece al subir, porque una barra que va y viene obliga a
+   adivinar dónde está.
+
+   Sin este archivo la barra se queda en su tamaño grande, que es el estado
+   que funciona sin ayuda de nadie.
+   ------------------------------------------------------------------------ */
+const barra = document.querySelector('[data-nav]');
+
+if (barra) {
+  /* Un centinela de un píxel arriba del todo, observado con
+     IntersectionObserver: cuando deja de verse es que hemos bajado. Se hace
+     así y no con un oyente de scroll porque un oyente se dispara decenas de
+     veces por segundo y este no se dispara ninguna. */
+  const centinela = document.createElement('div');
+  centinela.style.cssText = 'position:absolute;top:0;height:1px;width:1px';
+  centinela.setAttribute('aria-hidden', 'true');
+  document.body.prepend(centinela);
+
+  new IntersectionObserver(
+    ([entrada]) => {
+      barra.toggleAttribute('data-encogida', !entrada.isIntersecting);
+    },
+    { rootMargin: '-8px 0px 0px 0px' }
+  ).observe(centinela);
+}

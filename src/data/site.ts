@@ -60,8 +60,14 @@ export const site = {
  */
 export type ItemStack = {
   nombre: string;
-  /** En qué proyecto se demuestra. Si no se puede rellenar, no entra. */
-  donde: string;
+  /**
+   * En qué proyecto se demuestra. Si no se puede rellenar, no entra.
+   *
+   * Y se enseña. Estaba escrito y escondido, y la sección era una nube de
+   * palabras: «Astro» a secas no dice nada que no diga cualquier otro
+   * portfolio. «Astro — Velàlia, 13 páginas en 3 idiomas» sí.
+   */
+  donde: T;
   /** Si sale también en el hero. */
   hero?: boolean;
 };
@@ -72,44 +78,46 @@ export const stack: GrupoStack[] = [
   {
     grupo: { es: 'Construir la interfaz', en: 'Building the interface' },
     items: [
-      { nombre: 'Astro', donde: 'Velàlia, esta web', hero: true },
-      { nombre: 'TypeScript', donde: 'Velàlia, esta web', hero: true },
-      { nombre: 'JavaScript', donde: 'DoesItLast, Velàlia', hero: true },
-      { nombre: 'HTML semántico', donde: 'Los dos', hero: true },
-      { nombre: 'CSS moderno', donde: 'Los dos', hero: true },
+      { nombre: 'Astro', donde: { es: 'Velàlia (13 páginas), esta web', en: 'Velàlia (13 pages), this site' }, hero: true },
+      { nombre: 'TypeScript', donde: { es: 'Velàlia, esta web — astro check en verde', en: 'Velàlia, this site — astro check clean' }, hero: true },
+      { nombre: 'JavaScript', donde: { es: 'DoesItLast, sin framework ni empaquetador', en: 'DoesItLast, no framework, no bundler' }, hero: true },
+      { nombre: 'HTML semántico', donde: { es: 'Landmarks y encabezados, comprobados con axe', en: 'Landmarks and headings, checked with axe' }, hero: true },
+      { nombre: 'CSS moderno', donde: { es: 'Tokens, clamp(), :has(), color-mix()', en: 'Tokens, clamp(), :has(), color-mix()' }, hero: true },
     ],
   },
   {
     grupo: { es: 'Que sirva a todo el mundo', en: 'Making it work for everyone' },
     items: [
-      { nombre: 'Accesibilidad WCAG 2.2 AA', donde: 'Velàlia: 0 incumplimientos en 6 páginas × 5 entornos', hero: true },
-      { nombre: 'Rendimiento y Core Web Vitals', donde: 'Velàlia: Lighthouse 100, LCP 1,4 s', hero: true },
-      { nombre: 'Internacionalización', donde: 'Velàlia en 3 idiomas, DoesItLast en 2', hero: true },
-      { nombre: 'PWA y sin conexión', donde: 'DoesItLast' },
+      { nombre: 'WCAG 2.2 AA', donde: { es: 'Velàlia: 0 fallos en 6 páginas × 5 entornos', en: 'Velàlia: 0 failures across 6 pages × 5 environments' }, hero: true },
+      { nombre: 'Core Web Vitals', donde: { es: 'LCP 1,2 s · CLS 0 · TBT 0 ms', en: 'LCP 1.2 s · CLS 0 · TBT 0 ms' }, hero: true },
+      { nombre: 'Internacionalización', donde: { es: 'Rutas traducidas y hreflang recíproco en 3 idiomas', en: 'Translated routes and reciprocal hreflang in 3 languages' }, hero: true },
+      { nombre: 'PWA y sin conexión', donde: { es: 'DoesItLast: service worker, instalable', en: 'DoesItLast: service worker, installable' } },
+      { nombre: 'Sin JavaScript', donde: { es: 'Las dos webs se leen y se navegan enteras', en: 'Both sites read and navigate in full' } },
     ],
   },
   {
     grupo: { es: 'Que se encuentre', en: 'Making it findable' },
     items: [
-      { nombre: 'SEO técnico', donde: 'DoesItLast: 369 URLs indexables', hero: true },
-      { nombre: 'Datos estructurados', donde: 'Los dos' },
-      { nombre: 'AVIF, WebP y srcset', donde: 'Velàlia, esta web' },
+      { nombre: 'SEO técnico', donde: { es: 'DoesItLast: 369 URLs estáticas e indexables', en: 'DoesItLast: 369 static, indexable URLs' }, hero: true },
+      { nombre: 'Datos estructurados', donde: { es: 'schema.org: Person, Restaurant, Menu', en: 'schema.org: Person, Restaurant, Menu' } },
+      { nombre: 'AVIF, WebP y srcset', donde: { es: 'Una talla por pantalla, generadas al compilar', en: 'One size per screen, generated at build time' } },
     ],
   },
   {
     grupo: { es: 'Comprobar que es verdad', en: 'Proving it' },
     items: [
-      { nombre: 'Playwright', donde: 'Velàlia: 6 suites de pruebas' },
-      { nombre: 'axe-core', donde: 'Velàlia, esta web' },
-      { nombre: 'Lighthouse', donde: 'Velàlia, esta web' },
+      { nombre: 'Playwright', donde: { es: 'Velàlia: 6 suites — idiomas, tema, reserva, sin JS', en: 'Velàlia: 6 suites — languages, theme, booking, no-JS' } },
+      { nombre: 'axe-core', donde: { es: 'En cada auditoría, no al final del proyecto', en: 'On every audit, not at the end of the project' } },
+      { nombre: 'Lighthouse', donde: { es: '100 en las cinco categorías, móvil y escritorio', en: '100 across all five categories, mobile and desktop' } },
+      { nombre: 'Validación al compilar', donde: { es: 'Velàlia: un alérgeno mal escrito rompe el build', en: 'Velàlia: a misspelled allergen breaks the build' } },
     ],
   },
   {
     grupo: { es: 'Publicar', en: 'Shipping' },
     items: [
-      { nombre: 'Cloudflare Pages', donde: 'Velàlia, esta web' },
-      { nombre: 'Cloudflare Functions', donde: 'El formulario de esta web' },
-      { nombre: 'Git', donde: 'Todo' },
+      { nombre: 'Cloudflare Pages', donde: { es: 'Velàlia, esta web', en: 'Velàlia, this site' } },
+      { nombre: 'Cloudflare Functions', donde: { es: 'El formulario de esta página, con Resend', en: 'The form on this page, with Resend' } },
+      { nombre: 'Git', donde: { es: 'Seis repositorios', en: 'Six repositories' } },
     ],
   },
 ];

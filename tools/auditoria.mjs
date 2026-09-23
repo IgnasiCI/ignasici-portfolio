@@ -113,12 +113,13 @@ console.log('\n── Sin JavaScript ──');
   const pagina = await ctx.newPage();
   await pagina.goto(BASE + '/', { waitUntil: 'load' });
   const enlacesProyecto = await pagina.locator('.proyecto__nombre a').count();
+  const nav = await pagina.locator('[data-nav] .nav__boton').isVisible();
   const correo = await pagina.locator('a[href^="mailto:"]').first().isVisible();
-  const idioma = await pagina.locator('.idioma').isVisible();
+  const idioma = await pagina.locator('.idiomas').isVisible();
   const imagenes = await pagina.locator('.proyecto__medio img').count();
-  const ok = enlacesProyecto === NUM_PROYECTOS && correo && idioma && imagenes === NUM_PROYECTOS;
+  const ok = enlacesProyecto === NUM_PROYECTOS && correo && idioma && nav && imagenes === NUM_PROYECTOS;
   if (!ok) problemas++;
-  console.log(`  ${ok ? '✓' : '✗'} ${enlacesProyecto} proyectos · ${imagenes} imágenes · correo ${correo ? 'sí' : 'no'} · idioma ${idioma ? 'sí' : 'no'}`);
+  console.log(`  ${ok ? '✓' : '✗'} ${enlacesProyecto} proyectos · ${imagenes} imágenes · correo ${correo ? 'sí' : 'no'} · idioma ${idioma ? 'sí' : 'no'} · barra ${nav ? 'sí' : 'no'}`);
   await ctx.close();
 }
 

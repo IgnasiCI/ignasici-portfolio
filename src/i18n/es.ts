@@ -24,15 +24,18 @@ export const es = {
     sobreMi: 'Sobre mí',
     contacto: 'Contacto',
     volver: 'Volver a la portada',
+    principal: 'Principal',
+    cv: 'CV',
     idioma: 'Idioma',
   },
 
   hero: {
     propuesta:
-      'Diseño la interfaz y después la construyo. Dos webs publicadas en Astro y JavaScript, y las dos se pueden abrir y medir ahora mismo.',
+      'Diseño la interfaz y después la construyo. Dos webs publicadas que puedes abrir y medir.',
     verProyectos: 'Ver proyectos',
     descargarCV: 'Descargar CV',
     contacto: 'Contacto',
+    rotuloRegion: 'Presentación',
     stackVisible: 'Lo que uso',
   },
 
@@ -109,7 +112,7 @@ export const es = {
     titular: 'Si encaja, escríbeme',
     correo: 'Correo',
     telefono: 'Teléfono',
-    hechaCon: 'Hecha con Astro. Sin cookies, sin analítica y sin peticiones a terceros.',
+    hechaCon: 'Hecha con Astro, sin dependencias en el navegador.',
   },
 } as const;
 

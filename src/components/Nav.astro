@@ -1,0 +1,65 @@
+---
+/**
+ * La barra de navegación.
+ *
+ * Va fija y siempre visible. El motivo es de uso, no de estilo: quien está
+ * leyendo la ficha de un proyecto a media página no debería tener que subir
+ * hasta arriba para descargar el CV o para escribir.
+ *
+ * El selector de idioma enseña los dos, con el actual marcado. Antes era un
+ * círculo con «EN» dentro y no había forma de saber si eso era el idioma en el
+ * que estabas o el idioma al que ibas.
+ */
+import { site } from '../data/site';
+import { t, ruta, ancla, IDIOMAS, type Idioma } from '../i18n';
+
+interface Props {
+  idioma: Idioma;
+  /** La misma página en los dos idiomas, para el selector. */
+  alternativas: { idioma: Idioma; ruta: string }[];
+}
+const { idioma, alternativas } = Astro.props;
+const d = t(idioma);
+---
+
+<header class="nav" data-nav>
+  <div class="nav__fila">
+    <a class="nav__marca" href={ruta(idioma, 'portada')}>{site.nombre}</a>
+
+    <nav class="nav__acciones" aria-label={d.nav.principal}>
+      <a class="nav__enlace" data-secundario href={ancla(idioma, 'proyectos')}>
+        {d.hero.verProyectos}
+      </a>
+      <a class="nav__enlace" data-secundario href={ancla(idioma, 'stack')}>
+        {d.nav.stack}
+      </a>
+      <a class="nav__enlace" href={ruta(idioma, 'cv')}>{d.nav.cv}</a>
+      <a class="nav__boton" href={ancla(idioma, 'contacto')}>{d.hero.contacto}</a>
+    </nav>
+
+    {/* Una lista: son dos opciones del mismo conjunto, no dos enlaces sueltos. */}
+    <ul class="idiomas" aria-label={d.nav.idioma}>
+      {
+        IDIOMAS.map((i) => {
+          const actual = i === idioma;
+          const destino = alternativas.find((a) => a.idioma === i)?.ruta ?? '/';
+          return (
+            <li>
+              <a
+                class="idiomas__opcion"
+                href={destino}
+                hreflang={i}
+                lang={i}
+                rel="alternate"
+                aria-current={actual ? 'true' : undefined}
+              >
+                {t(i).meta.etiqueta}
+                <span class="vo"> — {t(i).meta.nombre}</span>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</header>

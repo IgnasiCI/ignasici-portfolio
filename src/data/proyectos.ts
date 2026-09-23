@@ -15,8 +15,9 @@ import type { T } from './site';
  * proyecto, no copiadas de su README.
  *
  * BORRADOR: con `borrador: true` el proyecto se ve en `npm run dev` pero no en
- * la web publicada. Cal Fumet está así hasta que se despliegue: enlazar a un
- * proyecto que no se puede abrir rompe justo lo que esta web promete.
+ * la web publicada. Sirve para tener una ficha escrita antes de que el
+ * proyecto esté desplegado: enlazar a algo que no se puede abrir rompe justo
+ * lo que esta web promete.
  *
  * REPOSITORIO: los repos están privados por ahora. Mientras `repositorio` esté
  * vacío no sale el botón «Ver código». Un enlace a un repo privado es peor que
@@ -73,8 +74,8 @@ export const proyectos: Proyecto[] = [
       en: 'Fine-dining restaurant · Three languages',
     },
     resumen: {
-      es: 'La web de un restaurante de este nivel falla casi siempre por lo mismo: la carta es un PDF que no se lee en el móvil, los alérgenos no están escritos, la reserva la lleva un widget de otra empresa que tarda en aparecer y trae cookies, y todo está en un solo idioma en una costa donde media mesa no habla castellano.',
-      en: 'The website of a restaurant at this level almost always fails the same way: the menu is a PDF that is unreadable on a phone, the allergens are not spelled out, booking is handled by someone else’s widget that loads late and brings cookies, and it is all in one language on a coast where half the table does not speak Spanish.',
+      es: 'Carta en PDF ilegible en el móvil, alérgenos sin escribir, reserva delegada en el widget de otra empresa y un solo idioma. Los cuatro fallos de siempre, resueltos de otra manera.',
+      en: 'A menu as an unreadable PDF, allergens never spelled out, booking handed to someone else’s widget, and one language. The same four failures as always, solved differently.',
     },
     cifras: [
       {
@@ -151,10 +152,6 @@ export const proyectos: Proyecto[] = [
           en: 'Works, and an automated test checks that it does',
         },
       },
-      {
-        etiqueta: { es: 'Terceros · cookies', en: 'Third parties · cookies' },
-        valor: { es: '0 · 0', en: '0 · 0' },
-      },
     ],
     nota: {
       es: 'Va con noindex a propósito: Velàlia no existe y no tiene por qué salir en las búsquedas de la Costa Daurada junto a restaurantes que sí. Es también por lo que su SEO marca 69 y no 100.',
@@ -182,8 +179,8 @@ export const proyectos: Proyecto[] = [
       en: 'Food storage guide · English and Spanish',
     },
     resumen: {
-      es: 'Saber si algo que lleva días en la nevera aún se puede comer termina en foros que se contradicen. La información fiable es pública —FDA y USDA— pero vive en documentos que nadie abre con la nevera delante.',
-      en: 'Working out whether something that has been in the fridge for days is still edible ends up in forums that contradict each other. The reliable information is public — FDA and USDA — but it lives in documents nobody opens with the fridge door open.',
+      es: 'Los datos de conservación de la FDA y el USDA son públicos, pero viven en documentos que nadie abre con la nevera delante. Una página indexable por alimento y un buscador que perdona cómo se escribe.',
+      en: 'FDA and USDA storage data is public, but it lives in documents nobody opens with the fridge door open. One indexable page per food, and a search that forgives how you type.',
     },
     cifras: [
       {
@@ -203,8 +200,8 @@ export const proyectos: Proyecto[] = [
       {
         valor: '0',
         etiqueta: {
-          es: 'cuentas, cookies y peticiones a terceros',
-          en: 'accounts, cookies and third-party requests',
+          es: 'dependencias, frameworks y pasos de empaquetado',
+          en: 'dependencies, frameworks and bundling steps',
         },
       },
     ],
@@ -247,10 +244,6 @@ export const proyectos: Proyecto[] = [
         },
       },
       {
-        etiqueta: { es: 'Cuentas · cookies · terceros', en: 'Accounts · cookies · third parties' },
-        valor: { es: 'Ninguno', en: 'None' },
-      },
-      {
         etiqueta: { es: 'Sin conexión', en: 'Offline' },
         valor: {
           es: 'Funciona desde la segunda visita, instalable',
@@ -269,102 +262,6 @@ export const proyectos: Proyecto[] = [
     borrador: false,
   },
 
-  // ─── CAL FUMET — escrito y listo, esperando despliegue ─────────────────
-  {
-    slug: 'cal-fumet',
-    nombre: 'Cal Fumet',
-    etiqueta: 'concepto',
-    subtitulo: {
-      es: 'Taberna de mercado · Una sola página',
-      en: 'Market tavern · A single page',
-    },
-    resumen: {
-      es: 'El contrapunto de Velàlia. Allí el visitante está en el sofá decidiendo una cena de 165 €; aquí está en la calle, con prisa y mala cobertura, eligiendo dónde cenar en los próximos treinta minutos. La misma industria y dos webs que no se parecen en nada, porque el escenario de uso manda por encima del estilo.',
-      en: 'Velàlia’s counterpoint. There the visitor is on the sofa deciding on a €165 dinner; here they are out on the street, in a hurry and on a bad signal, choosing where to eat in the next thirty minutes. The same industry and two sites with nothing in common, because the context of use outranks the style.',
-    },
-    cifras: [
-      {
-        valor: '43 KB',
-        etiqueta: {
-          es: 'la primera pantalla, en 3 peticiones',
-          en: 'the first screen, over 3 requests',
-        },
-      },
-      {
-        valor: '0',
-        etiqueta: {
-          es: 'líneas de JavaScript detrás de los filtros de alérgenos',
-          en: 'lines of JavaScript behind the allergen filters',
-        },
-      },
-      {
-        valor: '2 KB',
-        etiqueta: {
-          es: 'el plano dibujado, frente a los ~900 KB de un iframe',
-          en: 'the drawn map, against the ~900 KB of an iframe',
-        },
-      },
-    ],
-    decision: {
-      es: [
-        'Una sola página, no cinco. Cada navegación es una petición que puede fallar y un momento en el que se puede ir; con una sola página, todo lo que necesita ya está descargado antes de que lo busque. /carta existe igualmente como dirección propia y lleva al ancla, para poder pegarla en WhatsApp: se conserva la ventaja de tener URL sin pagar el coste de tener página.',
-        'Los filtros de alérgenos no usan JavaScript. Son botones de radio y :has(), y las secciones que se quedan vacías desaparecen solas. Alguien con celiaquía es exactamente la persona a la que no le puedes fallar por un archivo que no llegó.',
-        'El mapa está dibujado, no incrustado: un SVG de 2 KB con las dos calles, el metro, la línea de puntos de los tres minutos andando y el marcador; debajo, botones que abren Google Maps o Apple Maps. Un mapa incrustado pesa cerca de un megabyte, mete cookies de terceros —y con ellas la obligación de banner— y nadie navega dentro de un iframe: en cuanto hay que ir, se abre la app del móvil.',
-        'El horario va arriba, antes que el nombre del chef, porque es la segunda pregunta de cualquiera que esté en la calle. Y cuando falta menos de tres cuartos de hora para cerrar, el mensaje cambia a «cierra en 25 min».',
-      ],
-      en: [
-        'One page, not five. Every navigation is a request that can fail and a moment in which they can leave; with a single page, everything they need is already downloaded before they go looking for it. /carta still exists as an address of its own and jumps to the anchor, so it can be pasted into WhatsApp: the benefit of having a URL without paying the cost of having a page.',
-        'The allergen filters use no JavaScript. They are radio buttons and :has(), and sections left empty disappear by themselves. Someone with coeliac disease is exactly the person you cannot fail because a file did not arrive.',
-        'The map is drawn, not embedded: a 2 KB SVG with the two streets, the metro, the dotted line of the three-minute walk and the marker; underneath, buttons that open Google Maps or Apple Maps. An embedded map weighs close to a megabyte, brings third-party cookies — and with them a consent banner — and nobody navigates inside an iframe: the moment you actually have to go, you open the maps app.',
-        'The opening hours go at the top, ahead of the chef’s name, because that is the second question of anyone standing in the street. And when there is less than three quarters of an hour left, the message changes to “closes in 25 min”.',
-      ],
-    },
-    resultado: {
-      es: [
-        'Una página con la carta entera dentro: 29 platos validados al compilar y declarados también en schema.org con su precio.',
-        'Las fotografías están generadas con sharp a partir de la paleta real de cada plato, porque no hubo sesión de fotos: la web lo dice y el briefing de cada hueco se puede abrir desde la propia página. Cuando lleguen fotos de verdad se dejan con el mismo nombre y ya está.',
-      ],
-      en: [
-        'One page with the entire menu inside it: 29 dishes validated at build time and also declared in schema.org with their price.',
-        'The photographs are generated with sharp from each dish’s real palette, because there was no photo shoot: the site says so, and the brief for each slot can be opened from the page itself. When real photographs arrive, they are dropped in under the same names and that is that.',
-      ],
-    },
-    medido: [
-      {
-        etiqueta: { es: 'Primera pantalla', en: 'First screen' },
-        valor: { es: '43 KB en 3 peticiones', en: '43 KB over 3 requests' },
-      },
-      {
-        etiqueta: { es: 'Lighthouse móvil', en: 'Lighthouse mobile' },
-        valor: {
-          es: '100 rendimiento · 100 accesibilidad · 100 buenas prácticas',
-          en: '100 performance · 100 accessibility · 100 best practices',
-        },
-      },
-      { etiqueta: { es: 'LCP · CLS', en: 'LCP · CLS' }, valor: { es: '1,4 s · 0', en: '1.4 s · 0' } },
-      {
-        etiqueta: { es: 'axe-core', en: 'axe-core' },
-        valor: {
-          es: '0 incumplimientos en móvil y escritorio, claro y oscuro',
-          en: '0 violations on mobile and desktop, light and dark',
-        },
-      },
-      {
-        etiqueta: { es: 'JavaScript', en: 'JavaScript' },
-        valor: {
-          es: '8,7 KB en línea · 0 archivos .js que descargar',
-          en: '8.7 KB inline · 0 .js files to download',
-        },
-      },
-    ],
-    stack: ['Astro', 'TypeScript', 'Content Collections', 'sharp', 'PWA', 'Datos estructurados'],
-    /* Sin enlace todavía: por eso está en borrador. Esta web promete que todo
-       se puede abrir y medir; un proyecto sin web que abrir rompe la promesa. */
-    enlace: '',
-    repositorio: '',
-    imagenAlt: { es: '', en: '' },
-    borrador: true,
-  },
 ];
 
 /** En desarrollo se ve todo; publicada, solo lo que se puede abrir. */

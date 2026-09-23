@@ -22,9 +22,16 @@ const d = t(idioma);
         stack.map((grupo) => (
           <div class="stack__grupo" data-revelar>
             <h3 class="stack__titulo micro">{grupo.grupo[idioma]}</h3>
-            <ul class="fichas">
-              {grupo.items.map((i) => <li class="ficha">{i.nombre}</li>)}
-            </ul>
+            {/* Lista de definiciones: cada tecnología y dónde se demuestra son
+                una pareja, no dos textos sueltos. */}
+            <dl class="stack__lista">
+              {grupo.items.map((i) => (
+                <div class="stack__fila">
+                  <dt class="stack__nombre">{i.nombre}</dt>
+                  <dd class="stack__donde">{i.donde[idioma]}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
         ))
       }

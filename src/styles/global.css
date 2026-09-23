@@ -14,6 +14,18 @@
    `swap` = el texto se lee desde el primer instante con la fuente del sistema
    y se cambia al llegar la nuestra. Nunca hay texto invisible.             */
 
+/* Fraunces solo pinta titulares. Es la pieza que más cambia el aspecto del
+   sitio: sin una serif de display, todo son tamaños distintos de una misma
+   geométrica, que es el aspecto por defecto de cualquier web montada con una
+   librería de componentes. Va sin cursiva a propósito (ver subset-fonts.sh). */
+@font-face {
+  font-family: 'Fraunces';
+  src: url('/fonts/fraunces.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @font-face {
   font-family: 'Geist';
   src: url('/fonts/geist-latin.woff2') format('woff2');
@@ -47,6 +59,9 @@
   --accent: #e4322b;
   --accent-ink: #b3231b; /* 5,7:1 */
 
+  /* Tres voces con tres trabajos. Fraunces titula, Geist habla, Geist Mono
+     da datos. Ninguna hace el trabajo de otra. */
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
   --font-sans: 'Geist', system-ui, -apple-system, 'Segoe UI', Roboto,
     'Helvetica Neue', Arial, sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas,
@@ -58,8 +73,10 @@
   --t-body: clamp(1.0625rem, 1.042rem + 0.09vw, 1.125rem);
   --t-lead: clamp(1.25rem, 1.083rem + 0.74vw, 1.75rem);
   --t-h3: clamp(1.5rem, 1.333rem + 0.74vw, 2rem);
-  --t-h2: clamp(2.25rem, 1.5rem + 3.33vw, 4.5rem);
-  --t-display: clamp(2.75rem, min(1.167rem + 7.04vw, 15svh), 7.5rem);
+  --t-h2: clamp(2.5rem, 1.6rem + 4vw, 5rem);
+  /* El techo es alto a propósito: en una pantalla ancha, un titular con tope
+     bajo se queda pequeño mientras el hero sigue creciendo. */
+  --t-display: clamp(3rem, 1rem + 9vw, 9rem);
 
   --gutter: clamp(1.25rem, 0.85rem + 1.8vw, 3rem);
   /* El aire entre secciones. Cada sección ya empieza con una raya y un
@@ -71,6 +88,12 @@
   --medida: 34rem; /* medida de lectura: ~62 caracteres */
 
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Esquinas vivas. Las pastillas de 999px y las tarjetas de 12px son la firma
+     visual de las librerías de componentes: en cuanto aparecen, la página se
+     lee como una plantilla. 2 px es un borde, no una decoración. */
+  --radio: 2px;
+  --nav-h: 4.25rem;
   /* Área pulsable mínima. WCAG 2.2 pide 24 px; 44 es lo que de verdad se
      acierta con el pulgar, y es lo que usa esta web sin excepción. */
   --tap: 2.75rem;
@@ -94,7 +117,19 @@ html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
   /* Que un ancla no deje el titular pegado al borde de arriba. */
-  scroll-padding-top: 2rem;
+  /* Que un ancla no quede tapada por la barra fija. */
+  scroll-padding-top: calc(var(--nav-h) + 1rem);
+}
+
+h1,
+h2,
+h3,
+.display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  /* Fraunces es de contraste alto: apretada se lee como un titular de
+     periódico, que es justo lo que tiene que parecer. */
+  letter-spacing: -0.02em;
 }
 
 body {
@@ -158,7 +193,7 @@ ul {
   padding: 0.6rem 1rem;
   background: var(--ink);
   color: var(--paper);
-  border-radius: 4px;
+  border-radius: var(--radio);
   font-size: var(--t-micro);
   text-decoration: none;
   transform: translateY(-200%);
@@ -208,56 +243,168 @@ ul {
   text-wrap: balance;
 }
 
-/* Selector de idioma: fijo arriba a la derecha, fuera del flujo, porque no
-   compite con nada de la página. Un enlace, no un desplegable: con dos
-   idiomas, un menú es un clic de más. */
-.idioma-nav {
+/* --- 4 ter. La barra de navegación ---------------------------------------
+   Fija arriba y siempre visible. Es lo que pidió el uso real: quien está
+   mirando un proyecto a media página no debería tener que volver arriba para
+   descargar el CV o escribir.
+
+   Se comprime al bajar —de 4,25 rem a 3,25 rem— en lugar de esconderse. Una
+   barra que aparece y desaparece según la dirección del scroll obliga a
+   adivinar dónde está; una que siempre está y solo encoge, no.               */
+
+.nav {
   position: fixed;
-  top: 1rem;
-  right: var(--gutter);
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
-}
-
-.idioma {
-  display: grid;
-  place-items: center;
-  min-width: var(--tap);
-  min-height: var(--tap);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding-inline: 0.9rem;
-  background: color-mix(in srgb, var(--paper) 85%, transparent);
-  backdrop-filter: blur(8px);
-  font-family: var(--font-mono);
-  font-size: var(--t-micro);
-  letter-spacing: 0.08em;
-  text-decoration: none;
-  transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
-}
-
-.idioma:hover {
-  border-color: var(--ink-40);
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
   background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  /* La barra lleva fondo desde el primer momento y no es translúcida. Sobre
+     un hero oscuro, una barra transparente obliga a cambiarle los colores con
+     JavaScript según por dónde vaya el scroll, y eso falla en cuanto el
+     JavaScript no llega: queda tinta sobre tinta. Una barra maciza se lee
+     siempre, y además separa el hero del resto en lugar de flotar encima. */
+  transition: height 0.4s var(--ease), box-shadow 0.4s var(--ease);
 }
 
+/* Al separarse de arriba: más baja y con una sombra mínima que la despega.
+   El atributo lo pone main.js; sin JavaScript la barra se queda en su estado
+   grande, que es el que funciona sin ayuda de nadie. */
+.nav[data-encogida] {
+  height: 3.25rem;
+  box-shadow: 0 1px 12px color-mix(in srgb, var(--ink) 8%, transparent);
+}
 
-/* --- 4 bis. Ámbito oscuro ------------------------------------------------
+.nav__fila {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.nav__marca {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+  margin-right: auto;
+}
+
+.nav__acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Los enlaces de la barra. En pantallas estrechas se esconden los dos
+   secundarios y se queda lo imprescindible: el CV y el contacto son lo que
+   alguien que selecciona quiere pulsar, y son lo que sobrevive. */
+.nav__enlace {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding-inline: 0.75rem;
+  font-size: var(--t-micro);
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink-70);
+  transition: color 0.2s var(--ease);
+}
+
+.nav__enlace:hover {
+  color: var(--ink);
+}
+
+@media (max-width: 47.999rem) {
+  .nav__enlace[data-secundario] {
+    display: none;
+  }
+}
+
+/* El botón de la barra: rectángulo macizo, la única acción con peso. */
+.nav__boton {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding-inline: 1rem;
+  border-radius: var(--radio);
+  background: var(--ink);
+  color: var(--paper);
+  font-size: var(--t-micro);
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s var(--ease);
+}
+
+/* El cambio de idioma: dos estados a la vista, no una sola etiqueta.
+   Antes había un círculo que ponía «EN» y no decía si eso era el idioma
+   actual o el idioma al que ibas. Con ES y EN juntos y el activo marcado, no
+   hay nada que adivinar. */
+.idiomas {
+  display: flex;
+  align-items: center;
+  margin-left: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radio);
+  overflow: hidden;
+}
+
+.idiomas__opcion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
+  font-size: var(--t-micro);
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  color: var(--ink-40);
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.idiomas__opcion:hover {
+  color: var(--ink);
+}
+
+/* El idioma actual va macizo. `aria-current` hace el trabajo semántico y el
+   CSS se cuelga de él: no hay una clase que pueda quedarse desincronizada del
+   atributo que lee un lector de pantalla. */
+.idiomas__opcion[aria-current='true'] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* --- 4 quater. Ámbito oscuro ---------------------------------------------
    No es «modo oscuro»: es una zona oscura dentro de una web clara. El hero y
-   el pie van en tinta y el cuerpo en papel, y eso hace dos cosas a la vez —
-   da profundidad a una página que si no sería un folio, y enmarca el
-   contenido entre dos bloques que lo sostienen.
+   el pie van en tinta y el cuerpo en papel, y eso da profundidad a una página
+   que si no sería un folio, además de enmarcar el contenido entre dos bloques
+   que lo sostienen.
 
    Se hace redefiniendo los tokens dentro de `.oscuro`, así que los botones,
-   las fichas y los enlaces de dentro funcionan sin una sola regla nueva. Es
-   la ventaja de haber escrito la hoja con variables y no con colores sueltos.
+   las fichas y los enlaces de dentro funcionan sin una sola regla nueva. Es la
+   ventaja de haber escrito la hoja con variables y no con colores sueltos.
 
    Los valores están elegidos por contraste, no a ojo:
-     --ink   #f1f0ec sobre #12110f → 16,7:1
-     --ink-70 #b9b5ad             → 9,3:1
-     --ink-40 #8c8880             → 5,3:1 (AA en texto pequeño)
+     --ink    #f1f0ec sobre #12110f → 16,7:1
+     --ink-70 #b9b5ad              → 9,3:1
+     --ink-40 #8c8880              → 5,3:1 (AA en texto pequeño)
    El rojo de señal sobre tinta se queda en 4,3:1, por debajo del 4,5 que pide
    el texto pequeño, así que en oscuro se aclara. El color de marca es el
-   mismo; lo que cambia es el tono que hace falta para poder leerlo.        */
+   mismo; lo que cambia es el tono que hace falta para poder leerlo.         */
 
 .oscuro {
   --paper: #12110f;
@@ -276,7 +423,7 @@ ul {
 
 /* El grano. Es una textura SVG dentro del propio CSS: cero peticiones y unos
    300 bytes. Sobre un negro plano la diferencia es la que hay entre una
-   pantalla apagada y un papel impreso — y no cuesta ni un milisegundo. */
+   pantalla apagada y un papel impreso. */
 .oscuro::after {
   content: '';
   position: absolute;
@@ -287,7 +434,6 @@ ul {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='0.35'/%3E%3C/svg%3E");
 }
 
-/* El contenido, por encima del grano. */
 .oscuro > * {
   position: relative;
   z-index: 1;
@@ -318,7 +464,7 @@ ul {
   min-height: var(--tap);
   padding: 0.75rem 1.4rem;
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: var(--radio);
   font-size: var(--t-body);
   font-weight: 500;
   line-height: 1.2;
@@ -376,8 +522,10 @@ ul {
   justify-content: center;
   /* Ocupa la pantalla sin forzarla: con 100svh una pantalla baja recorta el
      contenido. Con min-height y padding, el hero crece si hace falta. */
-  min-height: min(46rem, 100svh);
-  padding-top: clamp(6rem, 4rem + 8vw, 10rem);
+  /* Descontando la barra, que es fija y tapa lo que haya debajo. */
+  min-height: min(44rem, calc(100svh - var(--nav-h)));
+  margin-top: var(--nav-h);
+  padding-top: clamp(4rem, 3rem + 5vw, 7rem);
   padding-bottom: clamp(3rem, 2rem + 4vw, 5rem);
 }
 
@@ -402,10 +550,12 @@ ul {
 .hero__nombre {
   margin-top: 1.5rem;
   font-size: var(--t-display);
-  /* Por debajo de 1 el interlineado aprieta las dos líneas del nombre hasta
-     que se leen como un bloque y no como dos renglones sueltos. */
-  line-height: 0.85;
-  letter-spacing: -0.05em;
+  /* Apretado para que las dos líneas se lean como un bloque, pero no tanto
+     como con una geométrica: los descendentes de Fraunces son largos y con
+     0,85 la «g» de Ignasi se montaba sobre la «C» de Capella. Con 1,02 las dos
+     líneas siguen leyéndose como un bloque y ya no se tocan. */
+  line-height: 1.02;
+  letter-spacing: -0.035em;
   font-weight: 500;
   max-width: 12ch;
 }
@@ -436,7 +586,7 @@ ul {
   margin-top: 2rem;
   padding: 0.6rem 1.1rem;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: var(--radio);
   color: var(--ink-70);
   font-size: var(--t-micro);
   font-family: var(--font-mono);
@@ -486,7 +636,7 @@ ul {
 .ficha {
   padding: 0.4rem 0.8rem;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: var(--radio);
   background: var(--paper-2);
   font-size: var(--t-micro);
   color: var(--ink-70);
@@ -576,7 +726,7 @@ ul {
 .proyecto__medio {
   margin: 0;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radio);
   overflow: hidden;
   background: var(--paper-2);
   box-shadow:
@@ -611,7 +761,7 @@ ul {
 .etiqueta {
   padding: 0.3rem 0.65rem;
   border: 1px solid var(--line);
-  border-radius: 4px;
+  border-radius: var(--radio);
   background: var(--paper-2);
   font-family: var(--font-mono);
   font-size: var(--t-micro);
@@ -790,15 +940,44 @@ ul {
 
 @media (min-width: 46rem) {
   .stack {
-    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-    gap: 3rem 2.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+    gap: 3.5rem 3rem;
   }
 }
 
 .stack__titulo {
   padding-bottom: 0.9rem;
   border-bottom: 1px solid var(--line);
+  font-family: var(--font-mono);
   font-weight: 400;
+}
+
+.stack__lista {
+  margin-top: 1.25rem;
+}
+
+.stack__fila {
+  padding-block: 0.7rem;
+}
+
+.stack__fila + .stack__fila {
+  border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+}
+
+.stack__nombre {
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+/* El «dónde» en mono y pequeño: es un dato, no una frase. Es también lo que
+   convierte la lista en algo que un perfil técnico puede comprobar. */
+.stack__donde {
+  margin: 0.2rem 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  line-height: 1.5;
+  color: var(--ink-40);
+  text-wrap: pretty;
 }
 
 .nota--ancha {
@@ -903,7 +1082,7 @@ ul {
   min-height: var(--tap);
   padding: 0.7rem 0.9rem;
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: var(--radio);
   background: var(--paper-2);
   color: var(--ink);
   font-family: inherit;
@@ -1003,7 +1182,7 @@ ul {
 .ficha-proyecto__medio {
   margin: clamp(2.5rem, 1.5rem + 4vw, 4rem) 0;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radio);
   overflow: hidden;
 }
 
@@ -1079,7 +1258,7 @@ ul {
   padding: 1.25rem 1.5rem;
   border-left: 2px solid var(--accent);
   background: var(--paper-2);
-  border-radius: 0 6px 6px 0;
+  border-radius: 0;
   font-size: var(--t-micro);
   line-height: 1.6;
   color: var(--ink-70);

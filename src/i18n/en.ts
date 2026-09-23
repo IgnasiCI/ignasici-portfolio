@@ -20,15 +20,18 @@ export const en: Diccionario = {
     sobreMi: 'About',
     contacto: 'Contact',
     volver: 'Back to the home page',
+    principal: 'Main',
+    cv: 'CV',
     idioma: 'Language',
   },
 
   hero: {
     propuesta:
-      'I design the interface and then I build it. Two published sites in Astro and JavaScript, and both are open to inspection and measurement right now.',
+      'I design the interface and then I build it. Two published sites you can open and measure.',
     verProyectos: 'See projects',
     descargarCV: 'Download CV',
     contacto: 'Contact',
+    rotuloRegion: 'Introduction',
     stackVisible: 'What I use',
   },
 
@@ -102,6 +105,6 @@ export const en: Diccionario = {
     titular: 'If it fits, write to me',
     correo: 'Email',
     telefono: 'Phone',
-    hechaCon: 'Built with Astro. No cookies, no analytics, no third-party requests.',
+    hechaCon: 'Built with Astro, with no dependencies in the browser.',
   },
 };
