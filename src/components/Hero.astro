@@ -10,7 +10,7 @@ const d = t(idioma);
    lee. La lista entera y agrupada por uso vive en su propia sección. */
 const tecnologias = stack
   .flatMap((g) => g.items)
-  .filter((i) => 'hero' in i && i.hero)
+  .filter((i) => i.hero)
   .map((i) => i.nombre);
 
 /* El nombre parte en dos líneas a propósito. A tamaño de display, «Ignasi

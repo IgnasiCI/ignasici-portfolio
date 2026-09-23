@@ -53,8 +53,22 @@ export const site = {
  * enteras en el hero ya no se escanean, se leen — y el hero es para escanear.
  * Las demás siguen aquí y salen en la sección de stack, más abajo, que es
  * donde mira quien ya ha decidido seguir leyendo.
+ *
+ * Va con tipo explícito y sin `as const`: con `as const` cada entrada era su
+ * propio tipo literal, TypeScript veía una unión de tuplas distintas en vez de
+ * una lista, y recorrerlas con flatMap no compilaba.
  */
-export const stack = [
+export type ItemStack = {
+  nombre: string;
+  /** En qué proyecto se demuestra. Si no se puede rellenar, no entra. */
+  donde: string;
+  /** Si sale también en el hero. */
+  hero?: boolean;
+};
+
+export type GrupoStack = { grupo: T; items: ItemStack[] };
+
+export const stack: GrupoStack[] = [
   {
     grupo: { es: 'Construir la interfaz', en: 'Building the interface' },
     items: [
@@ -98,7 +112,7 @@ export const stack = [
       { nombre: 'Git', donde: 'Todo' },
     ],
   },
-] as const;
+];
 
 /**
  * Lo que no está en la lista de arriba.

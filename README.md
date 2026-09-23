@@ -134,8 +134,13 @@ publiques: pones su dirección en `enlace`, haces la captura, y cambias
 ```bash
 npm install --no-save playwright-core axe-core lighthouse chrome-launcher
 npm run build
-npm run auditar
+npm run probar     # tipos + auditoría
 ```
+
+`npm run probar` son dos cosas: `astro check` y la auditoría. La comprobación
+de tipos es la que garantiza que los dos diccionarios de `src/i18n/` tengan
+las mismas claves — si se añade una en castellano y se olvida en inglés, falla
+ahí y no hay forma de publicar media traducción.
 
 Comprueba cuatro cosas: accesibilidad con axe-core en todas las páginas y en
 cuatro entornos, que la web se lee sin JavaScript, que

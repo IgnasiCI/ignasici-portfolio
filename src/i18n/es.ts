@@ -113,4 +113,20 @@ export const es = {
   },
 } as const;
 
-export type Diccionario = typeof es;
+/**
+ * El tipo del diccionario.
+ *
+ * `typeof es` a secas no sirve: con `as const`, cada texto es su propio tipo
+ * literal, así que el tipo exigiría que el diccionario inglés dijera
+ * «Castellano» y «Proyectos» en castellano. Tenía 60 errores de tipos por eso.
+ *
+ * Este tipo recorre la estructura y deja cada texto en `string`, quedándose
+ * solo con lo que de verdad hay que garantizar: que estén todas las claves y
+ * que estén anidadas igual. Si se añade una clave aquí y se olvida en `en.ts`,
+ * `astro check` falla y no hay forma de publicar media traducción.
+ */
+type Textos<T> = {
+  [K in keyof T]: T[K] extends string ? string : Textos<T[K]>;
+};
+
+export type Diccionario = Textos<typeof es>;
