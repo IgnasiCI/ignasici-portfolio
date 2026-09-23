@@ -38,8 +38,12 @@ export type Proyecto = {
   subtitulo: T;
   /** El párrafo del bloque de la portada: el problema, nunca el código. */
   resumen: T;
-  /** Tres hechos duros para la portada. Ni uno más: son para escanear. */
-  hechos: TL;
+  /**
+   * Tres cifras para la portada. Cifra grande y etiqueta pequeña, no bullets:
+   * el ojo agarra un número antes que una frase, y estas tres son justo lo que
+   * hace falta para decidir si merece la pena seguir leyendo.
+   */
+  cifras: { valor: string; etiqueta: T }[];
   /** La ficha: por qué está hecho así. Es lo que separa un portfolio de una galería. */
   decision: TL;
   /** La ficha: qué se puede hacer con ello. */
@@ -72,18 +76,29 @@ export const proyectos: Proyecto[] = [
       es: 'La web de un restaurante de este nivel falla casi siempre por lo mismo: la carta es un PDF que no se lee en el móvil, los alérgenos no están escritos, la reserva la lleva un widget de otra empresa que tarda en aparecer y trae cookies, y todo está en un solo idioma en una costa donde media mesa no habla castellano.',
       en: 'The website of a restaurant at this level almost always fails the same way: the menu is a PDF that is unreadable on a phone, the allergens are not spelled out, booking is handled by someone else’s widget that loads late and brings cookies, and it is all in one language on a coast where half the table does not speak Spanish.',
     },
-    hechos: {
-      es: [
-        'Portada: 53 KB en 4 peticiones, sin un solo byte de imagen',
-        '0 incumplimientos de axe-core en 6 páginas × 5 entornos',
-        'Castellano, catalán e inglés, con las rutas traducidas',
-      ],
-      en: [
-        'Home page: 53 KB over 4 requests, without a single byte of image',
-        'Zero axe-core violations across 6 pages × 5 environments',
-        'Spanish, Catalan and English, with translated routes',
-      ],
-    },
+    cifras: [
+      {
+        valor: '53 KB',
+        etiqueta: {
+          es: 'la portada, en 4 peticiones y sin una sola imagen',
+          en: 'the home page, over 4 requests and without a single image',
+        },
+      },
+      {
+        valor: '0',
+        etiqueta: {
+          es: 'incumplimientos de axe-core en 6 páginas × 5 entornos',
+          en: 'axe-core violations across 6 pages × 5 environments',
+        },
+      },
+      {
+        valor: '3',
+        etiqueta: {
+          es: 'idiomas con las rutas traducidas, no prefijadas',
+          en: 'languages with translated routes, not just prefixed ones',
+        },
+      },
+    ],
     decision: {
       es: [
         'Que la identidad ordene el contenido en lugar de decorarlo. Los dos menús degustación no se llaman «corto» y «largo»: se llaman Garbí y Mestral, los dos vientos del lugar. La rosa de cada tarjeta apunta a los grados reales de ese viento, y el campo de aire de cada sección sopla en esa misma dirección. Los grados salen de un solo archivo, así que la aguja y el nombre no se pueden descuadrar.',
@@ -170,18 +185,29 @@ export const proyectos: Proyecto[] = [
       es: 'Saber si algo que lleva días en la nevera aún se puede comer termina en foros que se contradicen. La información fiable es pública —FDA y USDA— pero vive en documentos que nadie abre con la nevera delante.',
       en: 'Working out whether something that has been in the fridge for days is still edible ends up in forums that contradict each other. The reliable information is public — FDA and USDA — but it lives in documents nobody opens with the fridge door open.',
     },
-    hechos: {
-      es: [
-        '166 alimentos en inglés y castellano, 369 URLs en el sitemap',
-        'Buscador que perdona erratas, acentos, plurales y sinónimos',
-        'Funciona sin conexión y se instala como aplicación',
-      ],
-      en: [
-        '166 foods in English and Spanish, 369 URLs in the sitemap',
-        'Search that forgives typos, accents, plurals and synonyms',
-        'Works offline and installs as an app',
-      ],
-    },
+    cifras: [
+      {
+        valor: '166',
+        etiqueta: {
+          es: 'alimentos publicados en inglés y castellano',
+          en: 'foods published in English and Spanish',
+        },
+      },
+      {
+        valor: '369',
+        etiqueta: {
+          es: 'URLs estáticas e indexables en el sitemap',
+          en: 'static, indexable URLs in the sitemap',
+        },
+      },
+      {
+        valor: '0',
+        etiqueta: {
+          es: 'cuentas, cookies y peticiones a terceros',
+          en: 'accounts, cookies and third-party requests',
+        },
+      },
+    ],
     decision: {
       es: [
         'Una respuesta por consulta y ninguna pantalla intermedia. Y una página propia por alimento, porque lo que la gente escribe en Google es «cuánto dura el pollo crudo», no «guía de conservación»: quien busca eso tiene que aterrizar en la respuesta, no en un buscador vacío.',
@@ -256,18 +282,29 @@ export const proyectos: Proyecto[] = [
       es: 'El contrapunto de Velàlia. Allí el visitante está en el sofá decidiendo una cena de 165 €; aquí está en la calle, con prisa y mala cobertura, eligiendo dónde cenar en los próximos treinta minutos. La misma industria y dos webs que no se parecen en nada, porque el escenario de uso manda por encima del estilo.',
       en: 'Velàlia’s counterpoint. There the visitor is on the sofa deciding on a €165 dinner; here they are out on the street, in a hurry and on a bad signal, choosing where to eat in the next thirty minutes. The same industry and two sites with nothing in common, because the context of use outranks the style.',
     },
-    hechos: {
-      es: [
-        '43 KB en 3 peticiones, y funciona sin cobertura desde la segunda visita',
-        'Filtros de alérgenos con cero JavaScript: radios y :has()',
-        'Plano dibujado de 2 KB en lugar de un iframe de Google de ~900 KB',
-      ],
-      en: [
-        '43 KB over 3 requests, and it works with no signal from the second visit',
-        'Allergen filters with zero JavaScript: radio buttons and :has()',
-        'A 2 KB hand-drawn map instead of a ~900 KB Google iframe',
-      ],
-    },
+    cifras: [
+      {
+        valor: '43 KB',
+        etiqueta: {
+          es: 'la primera pantalla, en 3 peticiones',
+          en: 'the first screen, over 3 requests',
+        },
+      },
+      {
+        valor: '0',
+        etiqueta: {
+          es: 'líneas de JavaScript detrás de los filtros de alérgenos',
+          en: 'lines of JavaScript behind the allergen filters',
+        },
+      },
+      {
+        valor: '2 KB',
+        etiqueta: {
+          es: 'el plano dibujado, frente a los ~900 KB de un iframe',
+          en: 'the drawn map, against the ~900 KB of an iframe',
+        },
+      },
+    ],
     decision: {
       es: [
         'Una sola página, no cinco. Cada navegación es una petición que puede fallar y un momento en el que se puede ir; con una sola página, todo lo que necesita ya está descargado antes de que lo busque. /carta existe igualmente como dirección propia y lleva al ancla, para poder pegarla en WhatsApp: se conserva la ventaja de tener URL sin pagar el coste de tener página.',

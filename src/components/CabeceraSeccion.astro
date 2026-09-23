@@ -1,0 +1,24 @@
+---
+/**
+ * La cabecera de una sección: número, título y entradilla.
+ *
+ * Está suelta en su componente porque la usan cuatro secciones y porque el
+ * número tiene que salir de un solo sitio: numerarlas a mano es garantía de
+ * tener dos «03» el día que se añada una en medio.
+ */
+interface Props {
+  numero: string;
+  titulo: string;
+  entradilla?: string;
+  id: string;
+}
+const { numero, titulo, entradilla, id } = Astro.props;
+---
+
+<div class="seccion__cabecera" data-revelar>
+  <div>
+    <span class="seccion__numero micro">{numero}</span>
+    <h2 class="seccion__titulo" id={`${id}-titulo`}>{titulo}</h2>
+  </div>
+  {entradilla && <p class="seccion__entradilla">{entradilla}</p>}
+</div>

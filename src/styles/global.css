@@ -62,7 +62,11 @@
   --t-display: clamp(2.75rem, min(1.167rem + 7.04vw, 15svh), 7.5rem);
 
   --gutter: clamp(1.25rem, 0.85rem + 1.8vw, 3rem);
-  --section: clamp(5rem, 3rem + 8vw, 10rem);
+  /* El aire entre secciones. Cada sección ya empieza con una raya y un
+     número, así que la separación no tiene que hacer sola todo el trabajo:
+     con el doble de este valor entre bloque y bloque, la página se convertía
+     en una sucesión de pantallas vacías. */
+  --section: clamp(4rem, 2.5rem + 5vw, 7rem);
   --max: 76rem;
   --medida: 34rem; /* medida de lectura: ~62 caracteres */
 
@@ -236,6 +240,74 @@ ul {
   background: var(--paper);
 }
 
+
+/* --- 4 bis. Ámbito oscuro ------------------------------------------------
+   No es «modo oscuro»: es una zona oscura dentro de una web clara. El hero y
+   el pie van en tinta y el cuerpo en papel, y eso hace dos cosas a la vez —
+   da profundidad a una página que si no sería un folio, y enmarca el
+   contenido entre dos bloques que lo sostienen.
+
+   Se hace redefiniendo los tokens dentro de `.oscuro`, así que los botones,
+   las fichas y los enlaces de dentro funcionan sin una sola regla nueva. Es
+   la ventaja de haber escrito la hoja con variables y no con colores sueltos.
+
+   Los valores están elegidos por contraste, no a ojo:
+     --ink   #f1f0ec sobre #12110f → 16,7:1
+     --ink-70 #b9b5ad             → 9,3:1
+     --ink-40 #8c8880             → 5,3:1 (AA en texto pequeño)
+   El rojo de señal sobre tinta se queda en 4,3:1, por debajo del 4,5 que pide
+   el texto pequeño, así que en oscuro se aclara. El color de marca es el
+   mismo; lo que cambia es el tono que hace falta para poder leerlo.        */
+
+.oscuro {
+  --paper: #12110f;
+  --paper-2: #1c1a18;
+  --ink: #f1f0ec;
+  --ink-70: #b9b5ad;
+  --ink-40: #8c8880;
+  --line: #322e2a;
+  --accent-ink: #ff8078;
+
+  position: relative;
+  background: var(--paper);
+  color: var(--ink);
+  color-scheme: dark;
+}
+
+/* El grano. Es una textura SVG dentro del propio CSS: cero peticiones y unos
+   300 bytes. Sobre un negro plano la diferencia es la que hay entre una
+   pantalla apagada y un papel impreso — y no cuesta ni un milisegundo. */
+.oscuro::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='0.35'/%3E%3C/svg%3E");
+}
+
+/* El contenido, por encima del grano. */
+.oscuro > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* En oscuro el botón principal se invierte: papel sobre tinta. */
+.oscuro .boton--principal {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.oscuro .boton--principal:hover {
+  background: #fff;
+}
+
+.oscuro .ficha {
+  background: color-mix(in srgb, var(--ink) 7%, transparent);
+  border-color: var(--line);
+}
+
 /* --- 5. Botones ----------------------------------------------------------- */
 
 .boton {
@@ -292,54 +364,85 @@ ul {
   text-decoration-thickness: 2px;
 }
 
-/* --- 6. Hero -------------------------------------------------------------- */
+/* --- 6. Hero -------------------------------------------------------------
+   Composición editorial, no una pila de elementos. El orden de lectura es el
+   de las cinco cosas que alguien que selecciona busca en treinta segundos:
+   qué rol (rótulo), quién (nombre), qué ofrece (la línea), si está disponible
+   y dónde (el estado), y cómo seguir (los botones).                       */
 
 .hero {
-  padding-top: clamp(5rem, 4rem + 6vw, 9rem);
-  /* La sección siguiente ya trae su propio aire arriba: con el del hero
-     entero se abría un hueco de dos secciones entre el stack y «Proyectos». */
-  padding-bottom: calc(var(--section) * 0.55);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* Ocupa la pantalla sin forzarla: con 100svh una pantalla baja recorta el
+     contenido. Con min-height y padding, el hero crece si hace falta. */
+  min-height: min(46rem, 100svh);
+  padding-top: clamp(6rem, 4rem + 8vw, 10rem);
+  padding-bottom: clamp(3rem, 2rem + 4vw, 5rem);
+}
+
+.hero__rotulo {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  color: var(--ink-40);
+}
+
+/* La raya del rótulo. Es el mismo recurso que usa la portada de Velàlia sobre
+   «CAMBRILS · MOLL DE PESCADORS»: ancla el texto pequeño a un borde y evita
+   que flote. */
+.hero__rotulo::before {
+  content: '';
+  width: clamp(1.5rem, 4vw, 3rem);
+  height: 1px;
+  background: currentColor;
+  flex: none;
 }
 
 .hero__nombre {
+  margin-top: 1.5rem;
   font-size: var(--t-display);
-  line-height: 0.88;
-  letter-spacing: -0.045em;
+  /* Por debajo de 1 el interlineado aprieta las dos líneas del nombre hasta
+     que se leen como un bloque y no como dos renglones sueltos. */
+  line-height: 0.85;
+  letter-spacing: -0.05em;
   font-weight: 500;
+  max-width: 12ch;
 }
 
-/* El rol va inmediatamente debajo del nombre y en el mismo bloque visual:
-   son la primera de las cinco cosas que alguien que selecciona busca, y no
-   pueden estar a dos alturas distintas de la pantalla. */
-.hero__rol {
-  margin-top: 0.75rem;
-  font-size: var(--t-h3);
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  font-weight: 400;
-  color: var(--ink-70);
+/* El punto de acento. Es decoración, sí — y es la clase de detalle mínimo que
+   separa una página compuesta de una página maquetada. Aparece en tres sitios
+   de toda la web y en ninguno más. */
+.punto {
+  color: var(--accent);
 }
 
 .hero__propuesta {
-  margin-top: 2rem;
-  max-width: 42rem;
+  margin-top: 2.25rem;
+  max-width: 40rem;
   font-size: var(--t-lead);
   line-height: 1.45;
+  color: var(--ink-70);
   text-wrap: pretty;
 }
 
-/* Disponibilidad. El punto es el único adorno del bloque y está justificado:
-   marca un estado, que es información, no decoración. */
+/* Disponibilidad. Va en una pastilla con borde porque es un dato de estado,
+   no una frase más: quien selecciona lo busca y tiene que encontrarlo sin
+   leer. El punto es el único adorno y marca justo eso, un estado. */
 .hero__estado {
   display: inline-flex;
   align-items: flex-start;
-  gap: 0.6rem;
-  margin-top: 1.75rem;
+  gap: 0.65rem;
+  margin-top: 2rem;
+  padding: 0.6rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
   color: var(--ink-70);
   font-size: var(--t-micro);
   font-family: var(--font-mono);
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  line-height: 1.5;
 }
 
 .hero__punto {
@@ -351,6 +454,10 @@ ul {
   border-radius: 50%;
   background: var(--accent);
   flex: none;
+  /* El halo sugiere «en directo» sin animar nada: una animación en bucle es
+     de las cosas que peor sientan con movimiento reducido, y aquí no hace
+     ninguna falta. */
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 .hero__acciones {
@@ -364,7 +471,7 @@ ul {
    «React 95 %» no significa nada y todo el mundo sabe que es inventado. Lo
    único honesto es la lista, y que cada cosa esté en un proyecto que se abre. */
 .hero__stack {
-  margin-top: 3rem;
+  margin-top: clamp(3rem, 2rem + 4vw, 4.5rem);
   padding-top: 1.75rem;
   border-top: 1px solid var(--line);
 }
@@ -377,7 +484,7 @@ ul {
 }
 
 .ficha {
-  padding: 0.35rem 0.75rem;
+  padding: 0.4rem 0.8rem;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: var(--paper-2);
@@ -386,16 +493,61 @@ ul {
   white-space: nowrap;
 }
 
-/* --- 7. Proyectos --------------------------------------------------------- */
+/* --- 7. Secciones y proyectos -------------------------------------------- */
 
-.proyectos {
+/* Cabecera de sección en dos columnas: el número y el título a la izquierda,
+   la entradilla a la derecha. Una rejilla asimétrica se lee como compuesta;
+   todo alineado a la izquierda y en bloque, como un documento. */
+.seccion__cabecera {
+  display: grid;
+  gap: 1.5rem 3rem;
+  padding-top: 2rem;
   border-top: 1px solid var(--line);
+}
+
+@media (min-width: 52rem) {
+  .seccion__cabecera {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+/* El número de sección. Ordena la lectura y da al conjunto aire de índice
+   editorial en lugar de aire de plantilla. */
+.seccion__numero {
+  display: block;
+  margin-bottom: 1rem;
+  color: var(--accent-ink);
+}
+
+.seccion__titulo {
+  font-size: var(--t-h2);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  font-weight: 500;
+  text-wrap: balance;
+}
+
+.seccion__entradilla {
+  max-width: var(--medida);
+  font-size: var(--t-lead);
+  line-height: 1.4;
+  color: var(--ink-70);
+  text-wrap: pretty;
+}
+
+@media (min-width: 52rem) {
+  /* Alineada con la base del titular, no con su parte de arriba: dos textos
+     de tamaños muy distintos alineados por arriba nunca parecen alineados. */
+  .seccion__entradilla {
+    padding-top: 0.6rem;
+  }
 }
 
 .proyectos__lista {
   display: grid;
-  gap: clamp(4rem, 2rem + 8vw, 8rem);
-  margin-top: clamp(3rem, 2rem + 4vw, 5rem);
+  gap: clamp(4.5rem, 2rem + 9vw, 9rem);
+  margin-top: clamp(3.5rem, 2rem + 5vw, 6rem);
 }
 
 .proyecto {
@@ -418,12 +570,26 @@ ul {
   }
 }
 
+/* La captura, con sombra y un grado de inclinación. Una captura plana pegada
+   al fondo se lee como una ilustración del texto; con volumen se lee como una
+   web de verdad, que es lo que es. */
 .proyecto__medio {
   margin: 0;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
   background: var(--paper-2);
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--ink) 6%, transparent),
+    0 12px 28px -12px color-mix(in srgb, var(--ink) 22%, transparent);
+  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+
+.proyecto:hover .proyecto__medio {
+  transform: translateY(-4px);
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--ink) 8%, transparent),
+    0 24px 48px -16px color-mix(in srgb, var(--ink) 28%, transparent);
 }
 
 .proyecto__medio img {
@@ -443,7 +609,7 @@ ul {
 /* La etiqueta de «Concepto» va en una palabra y sin disculpas. Un trabajo que
    nadie encargó se etiqueta como lo que es y ya está. */
 .etiqueta {
-  padding: 0.25rem 0.6rem;
+  padding: 0.3rem 0.65rem;
   border: 1px solid var(--line);
   border-radius: 4px;
   background: var(--paper-2);
@@ -455,7 +621,7 @@ ul {
 }
 
 .proyecto__nombre {
-  margin-top: 1rem;
+  margin-top: 1.1rem;
   font-size: var(--t-h2);
   line-height: 0.95;
   letter-spacing: -0.035em;
@@ -466,10 +632,20 @@ ul {
   text-decoration: none;
 }
 
-.proyecto__nombre a:hover {
-  text-decoration: underline;
-  text-underline-offset: 0.12em;
-  text-decoration-thickness: 2px;
+/* El subrayado crece desde la izquierda en lugar de aparecer de golpe: es el
+   mismo gesto que usa el titular al entrar, y mantiene el movimiento de toda
+   la web en una sola dirección. */
+.proyecto__nombre a {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0 2px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.4s var(--ease);
+}
+
+.proyecto:hover .proyecto__nombre a,
+.proyecto__nombre a:focus-visible {
+  background-size: 100% 2px;
 }
 
 .proyecto__subtitulo {
@@ -483,32 +659,40 @@ ul {
   text-wrap: pretty;
 }
 
-/* Los tres hechos duros. Son para escanear en cinco segundos, por eso son
-   lista y no párrafo, y por eso son tres y no seis. */
-.hechos {
+/* Las tres cifras. Un número grande se agarra de un vistazo y una frase hay
+   que leerla: puestos a resumir un proyecto en tres datos, que sean datos.
+   Van en rejilla con una línea arriba, como una ficha técnica. */
+.cifras {
   display: grid;
-  gap: 0.6rem;
-  margin-top: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  gap: 1.5rem 1.25rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
 }
 
-.hechos li {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.75rem;
-  align-items: start;
-  font-size: var(--t-micro);
+.cifras dd {
+  margin: 0;
+}
+
+.cifra__valor {
+  display: block;
+  font-size: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-weight: 500;
+  /* Cifras tabulares: así el 0 y el 166 no bailan de ancho entre proyectos. */
+  font-variant-numeric: tabular-nums;
+}
+
+.cifra__etiqueta {
+  display: block;
+  margin-top: 0.6rem;
   font-family: var(--font-mono);
-  line-height: 1.5;
-  color: var(--ink-70);
-}
-
-.hechos li::before {
-  content: '';
-  width: 0.375rem;
-  height: 0.375rem;
-  margin-top: 0.5em;
-  border-radius: 50%;
-  background: var(--accent);
+  font-size: var(--t-micro);
+  line-height: 1.45;
+  color: var(--ink-40);
+  text-wrap: pretty;
 }
 
 .proyecto__acciones {
@@ -516,6 +700,271 @@ ul {
   flex-wrap: wrap;
   gap: 0.75rem;
   margin-top: 2rem;
+}
+
+/* --- 7 bis. Cómo trabajo --------------------------------------------------
+   Lista numerada en dos columnas: el número y el título a la izquierda, el
+   texto a la derecha. La afirmación y su prueba van separadas visualmente
+   porque son dos cosas distintas — lo que digo y lo que lo sostiene.      */
+
+.metodo {
+  display: grid;
+  gap: 0;
+  margin-top: clamp(3rem, 2rem + 4vw, 5rem);
+  padding: 0;
+  list-style: none;
+  counter-reset: none;
+}
+
+.metodo__item {
+  display: grid;
+  gap: 0.75rem 3rem;
+  padding-block: clamp(2rem, 1.5rem + 2vw, 3rem);
+  border-top: 1px solid var(--line);
+}
+
+.metodo__item:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+@media (min-width: 52rem) {
+  .metodo__item {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  }
+}
+
+.metodo__indice {
+  color: var(--accent-ink);
+}
+
+.metodo__titulo {
+  margin-top: 0.4rem;
+  font-size: var(--t-h3);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+@media (min-width: 52rem) {
+  /* El número y el título ocupan la columna izquierda enteros, y el texto con
+     su prueba la derecha. Con el título a la derecha, la izquierda se quedaba
+     en una columna con dos cifras dentro y media pantalla vacía. */
+  .metodo__titulo {
+    margin-top: 0.75rem;
+  }
+}
+
+.metodo__texto {
+  max-width: var(--medida);
+  color: var(--ink-70);
+  text-wrap: pretty;
+}
+
+/* La prueba. En mono y con la raya del acento: se lee como un dato de ficha
+   técnica y no como una frase más del párrafo de arriba. */
+.metodo__evidencia {
+  margin-top: 1.25rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--accent);
+  max-width: var(--medida);
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  line-height: 1.55;
+}
+
+.metodo__rotulo {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+/* --- 7 ter. Stack ---------------------------------------------------------
+   Agrupado por para qué sirve cada cosa, no por «lenguajes / herramientas».
+   Alguien que selecciona no busca una taxonomía: busca si sabes resolver lo
+   que tiene entre manos.                                                   */
+
+.stack {
+  display: grid;
+  gap: 2.5rem;
+  margin-top: clamp(3rem, 2rem + 4vw, 5rem);
+}
+
+@media (min-width: 46rem) {
+  .stack {
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 3rem 2.5rem;
+  }
+}
+
+.stack__titulo {
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--line);
+  font-weight: 400;
+}
+
+.nota--ancha {
+  max-width: 42rem;
+  margin-top: clamp(3rem, 2rem + 3vw, 4rem);
+}
+
+.nota__titulo {
+  margin-bottom: 0.5rem;
+  color: var(--accent-ink);
+}
+
+/* --- 7 quater. Sobre mí --------------------------------------------------- */
+
+.sobre-mi {
+  display: grid;
+  gap: 3rem;
+  margin-top: clamp(3rem, 2rem + 4vw, 5rem);
+}
+
+@media (min-width: 58rem) {
+  .sobre-mi {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 4rem;
+  }
+}
+
+.sobre-mi__texto p:first-child {
+  margin-top: 0;
+  font-size: var(--t-lead);
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+/* La ficha de datos. Lo comprobable, separado de la narración: quien escanea
+   mira esto y se va con lo que necesita. */
+.datos {
+  display: grid;
+  gap: 1.5rem;
+  align-content: start;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.datos dd {
+  margin: 0;
+  margin-top: 0.4rem;
+  line-height: 1.5;
+}
+
+.dato__matiz {
+  color: var(--ink-40);
+  font-size: var(--t-micro);
+}
+
+.sobre-mi__cv {
+  margin-top: 2.5rem;
+}
+
+/* --- 7 quinquies. Contacto ------------------------------------------------ */
+
+.contacto {
+  display: grid;
+  gap: 3rem;
+  margin-top: clamp(3rem, 2rem + 4vw, 5rem);
+}
+
+@media (min-width: 58rem) {
+  .contacto {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 4rem;
+  }
+}
+
+.formulario {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 34rem;
+}
+
+.campo {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.campo label {
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.campo__nota {
+  color: var(--ink-40);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.campo input,
+.campo textarea {
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper-2);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--t-body);
+  line-height: 1.5;
+  transition: border-color 0.2s var(--ease);
+}
+
+.campo textarea {
+  resize: vertical;
+}
+
+.campo input:hover,
+.campo textarea:hover {
+  border-color: var(--ink-40);
+}
+
+.campo input:focus-visible,
+.campo textarea:focus-visible {
+  border-color: var(--ink);
+}
+
+/* El campo trampa. Se saca de pantalla en lugar de usar display:none, porque
+   un robot que mire el CSS descarta lo que está oculto del todo; sacado de
+   pantalla parece un campo normal mal colocado. */
+.trampa {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.formulario__aviso:empty {
+  display: none;
+}
+
+.formulario__aviso {
+  padding: 0.85rem 1rem;
+  border-left: 2px solid var(--accent);
+  background: var(--paper-2);
+  font-size: var(--t-micro);
+  line-height: 1.5;
+}
+
+.formulario button {
+  justify-self: start;
+}
+
+.contacto__directo {
+  align-content: start;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.contacto__separador {
+  margin-top: 1.5rem;
+}
+
+.contacto__directo p + p {
+  margin-top: 0.4rem;
 }
 
 /* --- 8. Ficha de proyecto ------------------------------------------------- */
@@ -636,18 +1085,177 @@ ul {
   color: var(--ink-70);
 }
 
-/* --- 9. Pie --------------------------------------------------------------- */
+/* --- 8 bis. CV -----------------------------------------------------------
+   Una página de verdad, de la que sale el PDF. La medida está pensada para
+   una A4: si se lee bien impreso, se lee bien en pantalla, y no al revés. */
+
+.cv {
+  padding-block: clamp(3rem, 2rem + 4vw, 5rem);
+}
+
+.cv__hoja {
+  max-width: 48rem;
+}
+
+.cv__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 3rem;
+}
+
+.cv__cabecera {
+  padding-bottom: 2rem;
+  border-bottom: 2px solid var(--ink);
+}
+
+.cv__nombre {
+  font-size: clamp(2.25rem, 1.8rem + 2vw, 3.25rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-weight: 500;
+}
+
+.cv__rol {
+  margin-top: 0.5rem;
+  font-size: var(--t-h3);
+  color: var(--ink-70);
+  letter-spacing: -0.02em;
+}
+
+.cv__contacto {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.25rem;
+  margin-top: 1.25rem;
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+}
+
+.cv__contacto a {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.cv__estado {
+  margin-top: 1rem;
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-70);
+}
+
+.cv__seccion {
+  margin-top: 2.5rem;
+}
+
+.cv__titulo {
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-40);
+}
+
+.cv__entrada {
+  margin-top: 1.5rem;
+}
+
+.cv__entrada-titulo {
+  font-size: var(--t-body);
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.cv__matiz {
+  font-weight: 400;
+  color: var(--ink-40);
+}
+
+.cv__enlace {
+  margin-top: 0.2rem;
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  color: var(--ink-40);
+}
+
+.cv__texto {
+  margin-top: 0.5rem;
+  color: var(--ink-70);
+  text-wrap: pretty;
+}
+
+.cv__cifras {
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  line-height: 1.6;
+  color: var(--ink-70);
+}
+
+.cv__idiomas {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.5rem;
+  line-height: 1.5;
+}
+
+/* Al imprimir: fuera lo que no es contenido, y las direcciones de los enlaces
+   escritas al lado, porque en papel un enlace azul no lleva a ninguna parte. */
+@media print {
+  .cv__acciones,
+  .idioma-nav,
+  .saltar {
+    display: none;
+  }
+
+  .cv {
+    padding: 0;
+  }
+
+  .cv__hoja {
+    max-width: none;
+    padding: 0;
+  }
+
+  .cv__seccion {
+    /* Que un apartado no se parta entre dos páginas por la mitad. */
+    break-inside: avoid;
+  }
+
+  /* Solo los enlaces cuyo texto visible no es ya la dirección. Ponerla en
+     todos llenaba la línea de contacto de paréntesis repetidos. */
+  .cv__contacto a[data-url]::after {
+    content: ' (' attr(href) ')';
+    color: var(--ink-40);
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+}
+
+/* --- 9. Pie --------------------------------------------------------------
+   El pie va oscuro como el hero. Los dos bloques de tinta cierran la página
+   por arriba y por abajo y dejan el contenido enmarcado, en lugar de que el
+   papel se desvanezca en el borde del navegador.                          */
 
 .pie {
-  border-top: 1px solid var(--line);
-  padding-block: clamp(3rem, 2rem + 4vw, 5rem);
+  padding-block: clamp(4rem, 3rem + 5vw, 7rem);
+}
+
+.pie__titular {
+  font-size: var(--t-h2);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  font-weight: 500;
+  max-width: 16ch;
+  text-wrap: balance;
 }
 
 .pie__enlaces {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  gap: 0.5rem 2rem;
+  margin-top: 2.5rem;
 }
 
 .pie__enlaces a {
@@ -657,8 +1265,38 @@ ul {
 }
 
 .pie__legal {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
   font-size: var(--t-micro);
   color: var(--ink-40);
+}
+
+/* --- 9 bis. Apariciones ---------------------------------------------------
+   Los bloques entran de abajo con un desfase mínimo. Son ~600 bytes de
+   JavaScript con IntersectionObserver, sin librería: GSAP son 50 KB para
+   esto mismo.
+
+   Dos condiciones antes de esconder nada:
+     `scripting: enabled` — si el JavaScript no llega, la regla ni se aplica y
+       no hay forma de que algo se quede invisible para siempre. Es el fallo
+       clásico de las apariciones y se evita en la propia consulta de medios.
+     `prefers-reduced-motion: no-preference` — con movimiento reducido no se
+       acorta la animación: no existe.                                      */
+
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  [data-revelar] {
+    opacity: 0;
+    transform: translateY(1.25rem);
+    transition:
+      opacity 0.7s var(--ease),
+      transform 0.7s var(--ease);
+  }
+
+  [data-revelar][data-visible] {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* --- 10. Movimiento ------------------------------------------------------- */

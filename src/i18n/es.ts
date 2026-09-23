@@ -36,6 +36,54 @@ export const es = {
     stackVisible: 'Lo que uso',
   },
 
+  metodo: {
+    titulo: 'Cómo trabajo',
+    entradilla:
+      'Cuatro afirmaciones y, al lado de cada una, el número que la sostiene. Sin número no habría fila.',
+    evidencia: 'Medido',
+  },
+
+  stack: {
+    titulo: 'Stack',
+    entradilla:
+      'Agrupado por para qué sirve cada cosa. Todo lo de esta lista está en un proyecto que se puede abrir: lo que no, no está.',
+  },
+
+  sobreMi: {
+    titulo: 'Sobre mí',
+  },
+
+  contacto: {
+    titulo: 'Contacto',
+    entradilla: 'Escríbeme y te contesto.',
+    nombre: 'Nombre',
+    email: 'Correo',
+    mensaje: 'Mensaje',
+    enviar: 'Enviar',
+    enviando: 'Enviando…',
+    obligatorio: 'obligatorio',
+    errorRed: 'No se ha podido enviar. Escríbeme a',
+    /* Sin `accept-charset` ni sorpresas: el campo trampa tiene que tener
+       nombre de campo real para que un robot lo rellene. */
+    trampa: 'No rellenes este campo',
+  },
+
+  cv: {
+    formacion: 'Formación',
+    experiencia: 'Experiencia',
+    idiomas: 'Idiomas',
+    ubicacion: 'Ubicación',
+    titulo: 'CV',
+    descargar: 'Descargar en PDF',
+    actualidad: 'Actualidad',
+    imprimir: 'Imprimir',
+  },
+
+  gracias: {
+    titulo: 'Mensaje enviado',
+    texto: 'Te contesto en cuanto lo lea. Si tienes prisa, el teléfono está abajo.',
+  },
+
   proyectos: {
     titulo: 'Proyectos',
     entradilla: 'Dos webs publicadas. Las dos se pueden abrir, medir y auditar.',
@@ -58,6 +106,7 @@ export const es = {
   },
 
   pie: {
+    titular: 'Si encaja, escríbeme',
     correo: 'Correo',
     telefono: 'Teléfono',
     hechaCon: 'Hecha con Astro. Sin cookies, sin analítica y sin peticiones a terceros.',

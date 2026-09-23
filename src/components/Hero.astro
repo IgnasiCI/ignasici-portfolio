@@ -12,12 +12,22 @@ const tecnologias = stack
   .flatMap((g) => g.items)
   .filter((i) => 'hero' in i && i.hero)
   .map((i) => i.nombre);
+
+/* El nombre parte en dos líneas a propósito. A tamaño de display, «Ignasi
+   Capella» en una sola línea obliga a encoger la tipografía hasta que deja de
+   ser un titular; en dos, cabe grande y se lee como una portada. */
+const [nombre, apellido] = site.nombre.split(' ');
 ---
 
-<header class="hero">
+<header class="hero oscuro">
   <div class="envoltura">
-    <h1 class="hero__nombre">{site.nombre}</h1>
-    <p class="hero__rol">{site.rol[idioma]}</p>
+    <p class="hero__rotulo micro">
+      {site.rol[idioma]} · {site.ubicacion.ciudad}
+    </p>
+
+    <h1 class="hero__nombre">
+      {nombre}<br />{apellido}<span class="punto" aria-hidden="true">.</span>
+    </h1>
 
     <p class="hero__propuesta">{d.hero.propuesta}</p>
 
@@ -33,7 +43,7 @@ const tecnologias = stack
       <a class="boton boton--secundario" href={ruta(idioma, 'cv')}>
         {d.hero.descargarCV}
       </a>
-      <a class="boton boton--secundario" href={`mailto:${site.email}`}>
+      <a class="boton boton--secundario" href={ancla(idioma, 'contacto')}>
         {d.hero.contacto}
       </a>
     </div>

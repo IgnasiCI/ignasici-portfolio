@@ -8,8 +8,12 @@ const d = t(idioma);
 const anio = new Date().getFullYear();
 ---
 
-<footer class="pie" id="contacto">
+<footer class="pie oscuro">
   <div class="envoltura">
+    <p class="pie__titular">
+      {d.pie.titular}<span class="punto" aria-hidden="true">.</span>
+    </p>
+
     <ul class="pie__enlaces">
       <li><a class="enlace" href={`mailto:${site.email}`}>{site.email}</a></li>
       <li><a class="enlace" href={`tel:${site.telefono}`}>{site.telefonoVisible}</a></li>
@@ -26,6 +30,7 @@ const anio = new Date().getFullYear();
         </a>
       </li>
     </ul>
+
     <p class="pie__legal">
       © {anio} {site.nombre}. {d.pie.hechaCon}
     </p>

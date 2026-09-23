@@ -1,0 +1,140 @@
+---
+/**
+ * El CV.
+ *
+ * Es una página de verdad, no una imagen de un PDF, y de ella sale el PDF con
+ * `npm run cv`. Un CV maquetado aparte se descuadra de la web en dos cambios;
+ * así los dos leen de `src/data/cv.ts` y no pueden decir cosas distintas.
+ *
+ * Va con `noindex`: lo que tiene que salir en Google es la portada, no una
+ * página con mi teléfono suelta en los resultados.
+ */
+import Base from '../layouts/Base.astro';
+import { site, stack } from '../data/site';
+import { formacion, experiencia, idiomas } from '../data/cv';
+import { proyectosVisibles } from '../data/proyectos';
+import { t, ruta, traducciones, type Idioma } from '../i18n';
+
+interface Props { idioma: Idioma }
+const { idioma } = Astro.props;
+const d = t(idioma);
+
+const fecha = (iso: string) =>
+  new Intl.DateTimeFormat(idioma === 'es' ? 'es-ES' : 'en-GB', {
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(iso));
+---
+
+<Base
+  idioma={idioma}
+  ruta={ruta(idioma, 'cv')}
+  alternativas={traducciones('cv')}
+  titulo={`${d.cv.titulo} · ${site.nombre}`}
+  descripcion={`${site.rol[idioma]}. ${site.disponibilidad[idioma]}`}
+  noindex
+>
+  <main id="contenido" class="cv">
+    <div class="envoltura cv__hoja">
+      {/* La barra de acciones no se imprime: en el PDF sobra. */}
+      <p class="cv__acciones">
+        <a class="boton boton--secundario" href={ruta(idioma, 'portada')}>← {d.nav.volver}</a>
+        <a class="boton boton--principal" href="/cv-ignasi-capella.pdf" download>
+          {d.cv.descargar}
+        </a>
+      </p>
+
+      <header class="cv__cabecera">
+        <h1 class="cv__nombre">{site.nombre}</h1>
+        <p class="cv__rol">{site.rol[idioma]}</p>
+        <ul class="cv__contacto">
+          <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+          <li><a href={`tel:${site.telefono}`}>{site.telefonoVisible}</a></li>
+          <li>{site.ubicacion.ciudad}, {idioma === 'es' ? site.ubicacion.pais : site.ubicacion.paisEN}</li>
+          <li><a href={site.url}>{site.dominio}</a></li>
+          {/* En papel un enlace que pone «LinkedIn» no lleva a ninguna parte,
+              así que al imprimir se añade la dirección detrás. GitHub no la
+              necesita: su texto visible ya es la dirección. */}
+          <li><a href={site.linkedin} data-url>LinkedIn</a></li>
+          <li><a href={site.github}>{site.github.replace('https://', '')}</a></li>
+        </ul>
+        <p class="cv__estado">{site.disponibilidad[idioma]}</p>
+      </header>
+
+      <section class="cv__seccion">
+        <h2 class="cv__titulo micro">{d.proyectos.titulo}</h2>
+        {
+          proyectosVisibles.map((p) => (
+            <article class="cv__entrada">
+              <h3 class="cv__entrada-titulo">
+                {p.nombre}
+                <span class="cv__matiz"> — {p.subtitulo[idioma]}</span>
+              </h3>
+              {p.enlace && <p class="cv__enlace">{p.enlace.replace('https://', '')}</p>}
+              {/* En un CV las cifras valen más que el párrafo: quien lo lee le
+                  dedica menos de un minuto. */}
+              <p class="cv__cifras">
+                {p.cifras.map((c) => `${c.valor} ${c.etiqueta[idioma]}`).join(' · ')}
+              </p>
+            </article>
+          ))
+        }
+      </section>
+
+      <section class="cv__seccion">
+        <h2 class="cv__titulo micro">{d.cv.experiencia}</h2>
+        {
+          experiencia.map((e) => (
+            <article class="cv__entrada">
+              <h3 class="cv__entrada-titulo">
+                {e.puesto[idioma]}
+                <span class="cv__matiz"> — {e.empresa}</span>
+              </h3>
+              <p class="cv__enlace">
+                {fecha(e.desde)} — {e.hasta ? fecha(e.hasta) : d.cv.actualidad} · {e.modalidad[idioma]}
+              </p>
+              <p class="cv__texto">{e.descripcion[idioma]}</p>
+            </article>
+          ))
+        }
+      </section>
+
+      <section class="cv__seccion">
+        <h2 class="cv__titulo micro">{d.cv.formacion}</h2>
+        {
+          formacion.map((f) => (
+            <article class="cv__entrada">
+              <h3 class="cv__entrada-titulo">{f.titulo[idioma]}</h3>
+              <p class="cv__enlace">{f.centro} · {f.fin[idioma]}</p>
+            </article>
+          ))
+        }
+      </section>
+
+      <section class="cv__seccion">
+        <h2 class="cv__titulo micro">{d.stack.titulo}</h2>
+        {
+          stack.map((g) => (
+            <p class="cv__texto">
+              <strong>{g.grupo[idioma]}:</strong> {g.items.map((i) => i.nombre).join(' · ')}
+            </p>
+          ))
+        }
+      </section>
+
+      <section class="cv__seccion">
+        <h2 class="cv__titulo micro">{d.cv.idiomas}</h2>
+        <ul class="cv__idiomas">
+          {
+            idiomas.map((i) => (
+              <li>
+                <strong>{i.idioma[idioma]}</strong> — {i.nivel[idioma]}
+                {'nota' in i && i.nota && <span class="cv__matiz"> {i.nota[idioma]}</span>}
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </div>
+  </main>
+</Base>

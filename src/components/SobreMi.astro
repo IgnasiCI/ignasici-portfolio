@@ -1,0 +1,62 @@
+---
+import CabeceraSeccion from './CabeceraSeccion.astro';
+import { sobreMi } from '../data/metodo';
+import { formacion, experiencia, idiomas } from '../data/cv';
+import { site } from '../data/site';
+import { t, ruta, type Idioma } from '../i18n';
+
+interface Props { idioma: Idioma; numero: string }
+const { idioma, numero } = Astro.props;
+const d = t(idioma);
+
+/* El año de inicio sale de la fecha, no escrito a mano: así no hay dos sitios
+   que puedan decir cosas distintas. */
+const desde = new Date(experiencia[0].desde).getFullYear();
+---
+
+<section class="seccion" id="sobre-mi" aria-labelledby="sobre-mi-titulo">
+  <div class="envoltura">
+    <CabeceraSeccion numero={numero} titulo={d.sobreMi.titulo} id="sobre-mi" />
+
+    <div class="sobre-mi" data-revelar>
+      <div class="prosa sobre-mi__texto">
+        {sobreMi.parrafos[idioma].map((parrafo) => <p>{parrafo}</p>)}
+      </div>
+
+      {/* La ficha de datos: lo comprobable, separado de la narración. Quien
+          escanea mira esto; quien quiere el porqué, lee lo de al lado. */}
+      <dl class="datos">
+        <div class="dato">
+          <dt class="micro">{d.cv.formacion}</dt>
+          <dd>
+            {formacion[0].titulo[idioma]}<br />
+            <span class="dato__matiz">{formacion[0].centro} · {formacion[0].fin[idioma]}</span>
+          </dd>
+        </div>
+        <div class="dato">
+          <dt class="micro">{d.cv.experiencia}</dt>
+          <dd>
+            {experiencia[0].puesto[idioma]}<br />
+            <span class="dato__matiz">
+              {experiencia[0].empresa} · {experiencia[0].modalidad[idioma]} · {desde}—
+            </span>
+          </dd>
+        </div>
+        <div class="dato">
+          <dt class="micro">{d.cv.idiomas}</dt>
+          <dd>
+            {idiomas.map((i) => `${i.idioma[idioma]} (${i.nivel[idioma]})`).join(' · ')}
+          </dd>
+        </div>
+        <div class="dato">
+          <dt class="micro">{d.cv.ubicacion}</dt>
+          <dd>{site.ubicacion.ciudad}, {idioma === 'es' ? site.ubicacion.pais : site.ubicacion.paisEN}</dd>
+        </div>
+      </dl>
+    </div>
+
+    <p class="sobre-mi__cv" data-revelar>
+      <a class="boton boton--secundario" href={ruta(idioma, 'cv')}>{d.hero.descargarCV}</a>
+    </p>
+  </div>
+</section>

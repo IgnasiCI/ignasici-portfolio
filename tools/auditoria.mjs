@@ -31,6 +31,13 @@ const BASE = `http://localhost:${PUERTO}`;
 const sitemap = await readFile('dist/sitemap.xml', 'utf8');
 const PAGINAS = [
   ...new Set([...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]).pathname)),
+  /* Las que van con noindex no están en el sitemap, pero existen y alguien
+     las va a usar: el CV es justo la página que abre quien está valorando la
+     candidatura. Se auditan igual. */
+  '/cv',
+  '/en/cv',
+  '/gracias',
+  '/en/thanks',
   '/404.html',
 ];
 /* Cuántos proyectos hay publicados, para las comprobaciones sin JavaScript. */

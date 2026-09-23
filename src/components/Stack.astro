@@ -1,0 +1,40 @@
+---
+import CabeceraSeccion from './CabeceraSeccion.astro';
+import { stack, enCamino } from '../data/site';
+import { t, type Idioma } from '../i18n';
+
+interface Props { idioma: Idioma; numero: string }
+const { idioma, numero } = Astro.props;
+const d = t(idioma);
+---
+
+<section class="seccion" id="stack" aria-labelledby="stack-titulo">
+  <div class="envoltura">
+    <CabeceraSeccion
+      numero={numero}
+      titulo={d.stack.titulo}
+      entradilla={d.stack.entradilla}
+      id="stack"
+    />
+
+    <div class="stack">
+      {
+        stack.map((grupo) => (
+          <div class="stack__grupo" data-revelar>
+            <h3 class="stack__titulo micro">{grupo.grupo[idioma]}</h3>
+            <ul class="fichas">
+              {grupo.items.map((i) => <li class="ficha">{i.nombre}</li>)}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+
+    {/* Lo que no está en la lista. Va al final y con el mismo peso visual que
+        una nota, no que una sección: es un plan, no una disculpa. */}
+    <div class="nota nota--ancha" data-revelar>
+      <p class="micro nota__titulo">{enCamino.titulo[idioma]}</p>
+      <p>{enCamino.texto[idioma]}</p>
+    </div>
+  </div>
+</section>

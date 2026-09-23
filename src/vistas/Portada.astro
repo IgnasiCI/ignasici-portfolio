@@ -5,10 +5,22 @@
  * Las páginas de `src/pages` solo eligen el idioma y llaman aquí. Así no hay
  * dos plantillas que mantener en paralelo, que es de donde salen las webs
  * bilingües en las que una versión se queda vieja.
+ *
+ * EL ORDEN es el del brief y responde a los dos lectores: quien selecciona
+ * necesita rol, stack y disponibilidad arriba y se va en treinta segundos;
+ * quien revisa el código llega después y quiere el porqué. Proyectos antes que
+ * método porque el trabajo convence más rápido que la descripción del trabajo.
+ *
+ * Los números de sección se pasan desde aquí, no se calculan dentro: así se
+ * ven todos juntos al leer este archivo y no hay forma de tener dos «03».
  */
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import Proyectos from '../components/Proyectos.astro';
+import Metodo from '../components/Metodo.astro';
+import Stack from '../components/Stack.astro';
+import SobreMi from '../components/SobreMi.astro';
+import Contacto from '../components/Contacto.astro';
 import Pie from '../components/Pie.astro';
 import { ruta, traducciones, type Idioma } from '../i18n';
 
@@ -19,7 +31,11 @@ const { idioma } = Astro.props;
 <Base idioma={idioma} ruta={ruta(idioma, 'portada')} alternativas={traducciones('portada')}>
   <Hero idioma={idioma} />
   <main id="contenido">
-    <Proyectos idioma={idioma} />
+    <Proyectos idioma={idioma} numero="01" />
+    <Metodo idioma={idioma} numero="02" />
+    <Stack idioma={idioma} numero="03" />
+    <SobreMi idioma={idioma} numero="04" />
+    <Contacto idioma={idioma} numero="05" />
   </main>
   <Pie idioma={idioma} />
 </Base>

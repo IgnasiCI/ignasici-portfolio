@@ -32,6 +32,52 @@ export const en: Diccionario = {
     stackVisible: 'What I use',
   },
 
+  metodo: {
+    titulo: 'How I work',
+    entradilla:
+      'Four claims and, next to each one, the number that holds it up. Without a number there would be no row.',
+    evidencia: 'Measured',
+  },
+
+  stack: {
+    titulo: 'Stack',
+    entradilla:
+      'Grouped by what each thing is for. Everything on this list is in a project you can open: what is not, is not on it.',
+  },
+
+  sobreMi: {
+    titulo: 'About',
+  },
+
+  contacto: {
+    titulo: 'Contact',
+    entradilla: 'Write to me and I will reply.',
+    nombre: 'Name',
+    email: 'Email',
+    mensaje: 'Message',
+    enviar: 'Send',
+    enviando: 'Sending…',
+    obligatorio: 'required',
+    errorRed: 'It could not be sent. Write to me at',
+    trampa: 'Do not fill in this field',
+  },
+
+  cv: {
+    formacion: 'Education',
+    experiencia: 'Experience',
+    idiomas: 'Languages',
+    ubicacion: 'Location',
+    titulo: 'CV',
+    descargar: 'Download as PDF',
+    actualidad: 'Present',
+    imprimir: 'Print',
+  },
+
+  gracias: {
+    titulo: 'Message sent',
+    texto: 'I will reply as soon as I read it. If you are in a hurry, my phone number is below.',
+  },
+
   proyectos: {
     titulo: 'Projects',
     entradilla: 'Two published sites. Both can be opened, measured and audited.',
@@ -53,6 +99,7 @@ export const en: Diccionario = {
   },
 
   pie: {
+    titular: 'If it fits, write to me',
     correo: 'Email',
     telefono: 'Phone',
     hechaCon: 'Built with Astro. No cookies, no analytics, no third-party requests.',

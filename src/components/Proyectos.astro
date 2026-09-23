@@ -1,22 +1,27 @@
 ---
 import { Image } from 'astro:assets';
+import CabeceraSeccion from './CabeceraSeccion.astro';
 import { proyectosVisibles } from '../data/proyectos';
 import { t, rutaProyecto, type Idioma } from '../i18n';
 
-interface Props { idioma: Idioma }
-const { idioma } = Astro.props;
+interface Props { idioma: Idioma; numero: string }
+const { idioma, numero } = Astro.props;
 const d = t(idioma);
 ---
 
 <section class="seccion proyectos" id="proyectos" aria-labelledby="proyectos-titulo">
   <div class="envoltura">
-    <h2 class="seccion__titulo" id="proyectos-titulo">{d.proyectos.titulo}</h2>
-    <p class="seccion__entradilla">{d.proyectos.entradilla}</p>
+    <CabeceraSeccion
+      numero={numero}
+      titulo={d.proyectos.titulo}
+      entradilla={d.proyectos.entradilla}
+      id="proyectos"
+    />
 
     <div class="proyectos__lista">
       {
         proyectosVisibles.map((p) => (
-          <article class="proyecto">
+          <article class="proyecto" data-revelar>
             {p.imagen && (
               <figure class="proyecto__medio">
                 {/* <Image /> genera AVIF y WebP y los tamaños de cada pantalla.
@@ -43,9 +48,18 @@ const d = t(idioma);
               <p class="proyecto__subtitulo micro">{p.subtitulo[idioma]}</p>
               <p class="proyecto__resumen">{p.resumen[idioma]}</p>
 
-              <ul class="hechos">
-                {p.hechos[idioma].map((h) => <li>{h}</li>)}
-              </ul>
+              {/* Las tres cifras van en <dl>: cada una es una pareja de dato y
+                  descripción, y eso es exactamente lo que significa una lista
+                  de definiciones. Un lector de pantalla lee «53 KB, la portada
+                  en 4 peticiones» como una unidad, no como dos textos sueltos. */}
+              <dl class="cifras">
+                {p.cifras.map((c) => (
+                  <div class="cifra">
+                    <dt class="cifra__valor">{c.valor}</dt>
+                    <dd class="cifra__etiqueta">{c.etiqueta[idioma]}</dd>
+                  </div>
+                ))}
+              </dl>
 
               <div class="proyecto__acciones">
                 <a class="boton boton--principal" href={rutaProyecto(idioma, p.slug)}>

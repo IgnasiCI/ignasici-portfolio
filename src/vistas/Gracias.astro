@@ -1,0 +1,39 @@
+---
+/**
+ * La página a la que llega quien envía el formulario sin JavaScript.
+ *
+ * Va con `noindex`: una página de confirmación en los resultados de búsqueda
+ * es basura, y además cualquiera podría llegar a ella sin haber enviado nada.
+ */
+import Base from '../layouts/Base.astro';
+import Pie from '../components/Pie.astro';
+import { site } from '../data/site';
+import { t, ruta, traducciones, type Idioma } from '../i18n';
+
+interface Props { idioma: Idioma }
+const { idioma } = Astro.props;
+const d = t(idioma);
+---
+
+<Base
+  idioma={idioma}
+  ruta={ruta(idioma, 'gracias')}
+  alternativas={traducciones('gracias')}
+  titulo={`${d.gracias.titulo} · ${site.nombre}`}
+  descripcion={d.gracias.texto}
+  noindex
+>
+  <main id="contenido" class="hero oscuro">
+    <div class="envoltura">
+      <p class="hero__rotulo micro">{d.contacto.titulo}</p>
+      <h1 class="hero__nombre">
+        {d.gracias.titulo}<span class="punto" aria-hidden="true">.</span>
+      </h1>
+      <p class="hero__propuesta">{d.gracias.texto}</p>
+      <div class="hero__acciones">
+        <a class="boton boton--principal" href={ruta(idioma, 'portada')}>{d.nav.volver}</a>
+      </div>
+    </div>
+  </main>
+  <Pie idioma={idioma} />
+</Base>

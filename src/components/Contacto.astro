@@ -1,0 +1,91 @@
+---
+import CabeceraSeccion from './CabeceraSeccion.astro';
+import { site, formEndpoint } from '../data/site';
+import { t, ruta, type Idioma } from '../i18n';
+
+interface Props { idioma: Idioma; numero: string }
+const { idioma, numero } = Astro.props;
+const d = t(idioma);
+---
+
+<section class="seccion" id="contacto" aria-labelledby="contacto-titulo">
+  <div class="envoltura">
+    <CabeceraSeccion
+      numero={numero}
+      titulo={d.contacto.titulo}
+      entradilla={d.contacto.entradilla}
+      id="contacto"
+    />
+
+    <div class="contacto" data-revelar>
+      {/*
+        El formulario envía a una función propia que corre en Cloudflare junto
+        a la web: los datos de quien escribe no pasan por ningún servicio de
+        terceros, y la política de seguridad puede seguir permitiendo envíos
+        solo a este dominio (form-action 'self').
+
+        Sin JavaScript el formulario envía igual, por POST normal, y la
+        función responde con una redirección a /gracias. El JavaScript solo
+        evita el salto de página cuando está disponible.
+      */}
+      <form
+        class="formulario"
+        method="POST"
+        action={formEndpoint}
+        data-formulario
+        data-enviando={d.contacto.enviando}
+        data-error-red={`${d.contacto.errorRed} ${site.email}`}
+      >
+        <input type="hidden" name="idioma" value={idioma} />
+        <input type="hidden" name="destino" value={ruta(idioma, 'gracias')} />
+
+        {/*
+          Campo trampa. Una persona no lo ve ni lo tabula; un robot que rellena
+          todos los campos, sí. Si llega relleno, la función descarta el envío y
+          responde «ok» igualmente, para que el robot no aprenda que le han
+          pillado. Se oculta con CSS, no con type="hidden": un campo oculto de
+          verdad lo salta cualquier robot que mire el HTML.
+        */}
+        <div class="trampa" aria-hidden="true">
+          <label for="empresa">{d.contacto.trampa}</label>
+          <input id="empresa" name="empresa" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div class="campo">
+          <label for="nombre">
+            {d.contacto.nombre} <span class="campo__nota">({d.contacto.obligatorio})</span>
+          </label>
+          <input id="nombre" name="nombre" type="text" required autocomplete="name" />
+        </div>
+
+        <div class="campo">
+          <label for="email">
+            {d.contacto.email} <span class="campo__nota">({d.contacto.obligatorio})</span>
+          </label>
+          <input id="email" name="email" type="email" required autocomplete="email" />
+        </div>
+
+        <div class="campo">
+          <label for="mensaje">
+            {d.contacto.mensaje} <span class="campo__nota">({d.contacto.obligatorio})</span>
+          </label>
+          <textarea id="mensaje" name="mensaje" rows="5" required></textarea>
+        </div>
+
+        <button class="boton boton--principal" type="submit">{d.contacto.enviar}</button>
+
+        {/* El aviso de error vive en el HTML desde el principio y vacío: si se
+            creara al fallar, un lector de pantalla no lo anunciaría. Con
+            aria-live sí. */}
+        <p class="formulario__aviso" role="status" aria-live="polite" data-aviso></p>
+      </form>
+
+      <aside class="contacto__directo">
+        <p class="micro">{d.pie.correo}</p>
+        <p><a class="enlace" href={`mailto:${site.email}`}>{site.email}</a></p>
+        <p class="micro contacto__separador">{d.pie.telefono}</p>
+        <p><a class="enlace" href={`tel:${site.telefono}`}>{site.telefonoVisible}</a></p>
+      </aside>
+    </div>
+  </div>
+</section>

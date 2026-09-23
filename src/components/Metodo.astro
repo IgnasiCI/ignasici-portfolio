@@ -1,0 +1,42 @@
+---
+import CabeceraSeccion from './CabeceraSeccion.astro';
+import { metodo } from '../data/metodo';
+import { t, type Idioma } from '../i18n';
+
+interface Props { idioma: Idioma; numero: string }
+const { idioma, numero } = Astro.props;
+const d = t(idioma);
+---
+
+<section class="seccion" id="metodo" aria-labelledby="metodo-titulo">
+  <div class="envoltura">
+    <CabeceraSeccion
+      numero={numero}
+      titulo={d.metodo.titulo}
+      entradilla={d.metodo.entradilla}
+      id="metodo"
+    />
+
+    <ol class="metodo">
+      {
+        metodo.map((m, i) => (
+          <li class="metodo__item" data-revelar>
+            <div>
+              {/* El número va aquí y no en un ::before para que un lector de
+                  pantalla lo lea: la lista está ordenada y el orden importa. */}
+              <span class="metodo__indice micro">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="metodo__titulo">{m.titulo[idioma]}</h3>
+            </div>
+            <div class="metodo__cuerpo">
+              <p class="metodo__texto">{m.afirmacion[idioma]}</p>
+              <p class="metodo__evidencia">
+                <span class="micro metodo__rotulo">{d.metodo.evidencia}</span>
+                {m.evidencia[idioma]}
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
